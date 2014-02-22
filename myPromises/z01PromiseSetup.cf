@@ -14,4 +14,9 @@ bundle common z01_promise_setup
             "myPromises/z02GlobalClasses.cf",
             "myPromises/a01Hello.cf",
         };
+
+        "my_lib_files" slist =>
+        {
+            "myPromises/lib/files.cf",
+        };
 }

@@ -13,7 +13,7 @@ bundle agent b02_packager_config
             "$(yum_conf)"
                 edit_defaults   => backup_timestamp,
                 changes         => detect_all_change,
-                edit_line       => set_variable_values_ini("yum_config_vars", "$(yum_config_sections)"),
+                edit_line       => set_variable_values_ini("b02_packager_config.yum_config_vars", "$(yum_config_sections)"),
                 classes         => if_repaired("convert_groups");
 
     commands:

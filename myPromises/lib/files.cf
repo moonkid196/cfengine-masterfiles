@@ -1,8 +1,2 @@
 # vim:syntax=cf3
 
-body changes see_all
-{
-    hash            => "sha512";
-    report_changes  => "all";
-    update_hashes   => "yes";
-}

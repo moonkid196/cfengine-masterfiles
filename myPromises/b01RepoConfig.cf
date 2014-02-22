@@ -1,0 +1,49 @@
+# vim:syntax=cf3
+
+bundle agent b01_repo_config
+{
+    vars:
+        fedora_19::
+            # Repo names
+            "fedora_repo"               string => "fedora";
+            "fedora_updates_repo"       string => "updates";
+
+            # Filesystem paths
+            "repo_path"                 string => "/etc/yum.repos.d";
+            "fedora_repo_path"          string => "$(repo_path)/fedora.repo";
+            "fedora_updates_repo_path"  string => "$(repo_path)/fedora-updates.repo";
+
+            # HTTP paths
+            "fedora_mirror"             string => "http://gateway.baburke.net/mirror/Fedora";
+            "fedora_http_path"          string => "releases/19/Everything/x86_64/os";
+            "fedora_updates_http_path"  string => "updates/19/x86_64";
+
+    files:
+        fedora_19.internal::
+            "$(fedora_repo_path)"
+                changes     => detect_all_change,
+                edit_line   => yum_repo_update("$(fedora_repo)", "$(fedora_mirror)", "$(fedora_http_path)"),
+                classes     => if_repaired("clear_package_cache");
+
+            "$(fedora_updates_repo_path)"
+                changes     => detect_all_change,
+                edit_line   => yum_repo_update("$(fedora_updates_repo)", "$(fedora_mirror)", "$(fedora_updates_http_path)"),
+                classes     => if_repaired("clear_package_cache");
+
+    commands:
+        clear_package_cache.redhat::
+            "/usr/bin/yum clean all";
+}
+
+
+bundle edit_line yum_repo_update(repo, mirror, path)
+{
+    replace_patterns:
+        "^(mirrorlist=.*)$"
+            replace_with    => comment("$(comment)"),
+            select_region   => INI_section("$(repo)");
+
+        "^#\s*baseurl=.*$"
+            replace_with    => value("baseurl=$(mirror)/$(path)"),
+            select_region   => INI_section("$(repo)");
+}

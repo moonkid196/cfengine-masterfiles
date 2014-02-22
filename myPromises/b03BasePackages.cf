@@ -20,6 +20,7 @@ bundle agent b03_base_packages
                 "iotop",
                 "ntp",
                 "lsof",
+                "strace",
             };
 
     packages:

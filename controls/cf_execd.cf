@@ -10,6 +10,7 @@ body executor control
 
 {
 
+<<<<<<< HEAD
     any::
 
       splaytime  => "4"; # activity will be spread over this many time slices

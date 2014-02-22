@@ -1,0 +1,17 @@
+# vim:syntax=cf3
+
+bundle common z01_promise_setup
+{
+    vars:
+        "bundles" slist =>
+        {
+            "z02_global_classes",
+            "a01_hello",
+        };
+
+        "promise_files" slist =>
+        {
+            "myPromises/z02GlobalClasses.cf",
+            "myPromises/a01Hello.cf",
+        };
+}

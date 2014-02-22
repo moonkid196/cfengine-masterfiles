@@ -26,6 +26,10 @@ body common control
                           cfe_internal_management,   # See cfe_internal/CFE_cfengine.cf
                           service_catalogue,
 
+                          # baburke.net
+                          z01_promise_setup,
+                          @(z01_promise_setup.bundles),
+
       };
 
       inputs => {
@@ -66,6 +70,10 @@ body common control
 
                 # List of services here
                   "services/file_change.cf",
+
+                  # baburke.net
+                  "myPromises/z01PromiseSetup.cf",
+                  @(z01_promise_setup.inputs),
 
       };
 

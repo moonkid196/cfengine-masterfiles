@@ -1,0 +1,15 @@
+# vim:syntax=cf3
+
+bundle agent a01_hello
+{
+    reports:
+        any::
+            "I am $(sys.fqhost)."
+            comment => "Just some basic status fodder for email.";
+
+        baburke::
+            "I am a baburke.net machine.";
+
+        baburke.servers::
+            "I am also a server.";
+}

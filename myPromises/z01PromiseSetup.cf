@@ -9,6 +9,7 @@ bundle common z01_promise_setup
             "a01_hello",
             "b01_repo_config",
             "b02_packager_config",
+            "b03_base_packages",
         };
 
         "promise_files" slist =>
@@ -17,6 +18,7 @@ bundle common z01_promise_setup
             "myPromises/a01Hello.cf",
             "myPromises/b01RepoConfig.cf",
             "myPromises/b02PackagerConfig.cf",
+            "myPromises/b03BasePackages.cf",
         };
 
         "my_lib_files" slist =>

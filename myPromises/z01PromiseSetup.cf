@@ -7,6 +7,7 @@ bundle common z01_promise_setup
         {
             "z02_global_classes",
             "a01_hello",
+            "b01_repo_config",
         };
 
         "promise_files" slist =>

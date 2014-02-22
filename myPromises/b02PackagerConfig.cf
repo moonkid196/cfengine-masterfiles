@@ -1,0 +1,23 @@
+# vim:syntax=cf3
+
+bundle agent b02_packager_config
+{
+    vars:
+        fedora_19::
+            "yum_conf" string => "/etc/yum.conf";
+            "yum_config_vars[main][group_command]" string => "objects";
+            "yum_config_sections" slist => { "main" };
+
+    files:
+        fedora_19::
+            "$(yum_conf)"
+                changes     => detect_all_changes,
+                edit_line   => set_variable_values_ini($(yum_config_vars), "$(yum_config_sections)");
+                classes     => if_repaired("convert_groups");
+
+    commands:
+        fedora_19.convert_groups::
+            "/usr/bin/yum groups mark convert";
+}
+
+

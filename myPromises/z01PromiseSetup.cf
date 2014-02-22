@@ -8,6 +8,7 @@ bundle common z01_promise_setup
             "z02_global_classes",
             "a01_hello",
             "b01_repo_config",
+            "b02_packager_config",
         };
 
         "promise_files" slist =>
@@ -15,6 +16,7 @@ bundle common z01_promise_setup
             "myPromises/z02GlobalClasses.cf",
             "myPromises/a01Hello.cf",
             "myPromises/b01RepoConfig.cf",
+            "myPromises/b02PackagerConfig.cf",
         };
 
         "my_lib_files" slist =>

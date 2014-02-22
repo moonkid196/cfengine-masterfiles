@@ -21,14 +21,16 @@ bundle agent b01_repo_config
     files:
         fedora_19.internal::
             "$(fedora_repo_path)"
-                changes     => detect_all_change,
-                edit_line   => yum_repo_update("$(fedora_repo)", "$(fedora_mirror)", "$(fedora_http_path)"),
-                classes     => if_repaired("clear_package_cache");
+                edit_defaults   => backup_timestamp,
+                changes         => detect_all_change,
+                edit_line       => yum_repo_update("$(fedora_repo)", "$(fedora_mirror)", "$(fedora_http_path)"),
+                classes         => if_repaired("clear_package_cache");
 
             "$(fedora_updates_repo_path)"
-                changes     => detect_all_change,
-                edit_line   => yum_repo_update("$(fedora_updates_repo)", "$(fedora_mirror)", "$(fedora_updates_http_path)"),
-                classes     => if_repaired("clear_package_cache");
+                edit_defaults   => backup_timestamp,
+                changes         => detect_all_change,
+                edit_line       => yum_repo_update("$(fedora_updates_repo)", "$(fedora_mirror)", "$(fedora_updates_http_path)"),
+                classes         => if_repaired("clear_package_cache");
 
     commands:
         clear_package_cache.redhat::

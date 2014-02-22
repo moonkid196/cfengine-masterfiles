@@ -40,7 +40,7 @@ bundle edit_line yum_repo_update(repo, mirror, path)
 {
     replace_patterns:
         "^(mirrorlist=.*)$"
-            replace_with    => comment("$(comment)"),
+            replace_with    => comment("#"),
             select_region   => INI_section("$(repo)");
 
         "^#\s*baseurl=.*$"

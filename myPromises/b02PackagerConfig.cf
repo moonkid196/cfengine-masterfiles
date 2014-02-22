@@ -12,7 +12,7 @@ bundle agent b02_packager_config
         fedora_19::
             "$(yum_conf)"
                 changes     => detect_all_changes,
-                edit_line   => set_variable_values_ini("$(yum_config_vars)", "$(yum_config_sections)");
+                edit_line   => set_variable_values_ini("$(yum_config_vars)", "$(yum_config_sections)"),
                 classes     => if_repaired("convert_groups");
 
     commands:

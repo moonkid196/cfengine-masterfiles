@@ -1,0 +1,21 @@
+# vim:syntax=cf3
+
+bundle agent c01_root_setup
+{
+    vars:
+        "root_home_dir"     string => "/root";
+        "inputs_dir"        string => "/var/cfengine/inputs";
+
+        "templates_dir"     string => "$(inputs_dir)/myTemplates";
+        "root_templates"    string => "$(templates_dir)/root";
+
+    files:
+        any::
+            "$(root_home_dir)"
+                comment         => "Make root's home area nicer",
+                handle          => "root_setup_home_dir",
+                copy_from       => backup_local_cp("$(root_templates)"),
+                depth_search    => recurse_with_base("inf"),
+                perms           => mog("0600", "root", "root"),
+                create          => "true";
+}

@@ -21,6 +21,7 @@ bundle agent b03_base_packages
                 "ntp",
                 "lsof",
                 "strace",
+                "tuned",
             };
 
     packages:

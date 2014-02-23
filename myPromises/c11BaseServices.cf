@@ -27,7 +27,7 @@ bundle agent c11_setup_postfix
             service_method => custom_service;
 
         "$(bad_services)"
-            service_policy => "disable",
+            service_policy => "stop",
             service_method => custom_service;
 
     packages:
@@ -55,7 +55,7 @@ bundle agent c11_setup_ntp
             service_method => custom_service;
 
         "$(bad_services)"
-            service_policy => "disable",
+            service_policy => "stop",
             service_method => custom_service;
 
     packages:
@@ -83,7 +83,7 @@ bundle agent c11_setup_sshd
             service_method => custom_service;
 
         "$(bad_services)"
-            service_policy => "disable",
+            service_policy => "stop",
             service_method => custom_service;
 
     packages:

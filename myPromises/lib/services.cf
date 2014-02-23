@@ -33,13 +33,12 @@ bundle agent systemd_service(service,state)
         "request_stop"      expression => strcmp("stop", "$(state)");
         "request_reload"    expression => strcmp("reload", "$(state)");
         "request_restart"   expression => strcmp("restart", "$(state)");
-        "request_disable"   expression => strcmp("disable", "$(state)");
 
         "action_start"      expression => "request_start.!service_active";
         "action_enable"     expression => "request_start.!service_enabled";
         "action_stop"       expression => "(request_stop|request_disable).service_active";
         "action_reload"     expression => "request_reload.service_active.can_reload_service";
-        "action_disable"    expression => "request_disable.!service_enabled";
+        "action_disable"    expression => "request_stop.service_enabled";
         "action_restart"    expression => "request_restart.service_active";
 
     commands:

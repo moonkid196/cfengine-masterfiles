@@ -11,6 +11,7 @@ bundle common z01_promise_setup
             "b02_packager_config",
             "b03_base_packages",
             "c01_root_setup",
+            "c11_base_services",
         };
 
         "promise_files" slist =>
@@ -21,6 +22,7 @@ bundle common z01_promise_setup
             "myPromises/b02PackagerConfig.cf",
             "myPromises/b03BasePackages.cf",
             "myPromises/c01RootSetup.cf",
+            "myPromises/c01BaseServices.cf",
         };
 
         "my_lib_files" slist =>

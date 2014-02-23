@@ -17,6 +17,7 @@ bundle agent c11_setup_postfix
         fedora_19::
             "package_name"  string => "postfix";
             "service_name"  string => "postfix";
+            "sendmail"      string => "sendmail";
             "main_cf"       string => "/etc/postfix/main.cf";
 
     services:
@@ -25,13 +26,16 @@ bundle agent c11_setup_postfix
             service_policy => "start",
             service_method => custom_service;
 
+        "$(sendmail)"
+            service_policy => "stop",
+            service_method => custom_service;
+
     packages:
-        redhat::
-            "$(package_name)"
-                comment => "Ensure Postfix is installed",
-                handle => "c11_setup_postfix_packages",
-                package_policy => "add",
-                package_method => generic;
+        "$(package_name)"
+            comment => "Ensure Postfix is installed",
+            handle => "c11_setup_postfix_packages",
+            package_policy => "add",
+            package_method => generic;
 }
 
 

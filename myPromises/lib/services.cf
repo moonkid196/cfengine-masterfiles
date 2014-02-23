@@ -10,6 +10,57 @@ body service_method custom_service
 
 bundle agent custom_service_bundle(service, state)
 {
+    methods:
+        fedora_19::
+            "SystemdService" usebundle => systemd_service(service, state);
+}
+
+
+bundle agent systemd_service(service,state)
+{
+    vars:
+        "systemctl_path" string => "/bin/systemctl";
+
+    classes:
+        "service_enabled"   expression => returnszero("$(systemctl_path) is-enabled $(service)", "noshell");
+        "service_active"    expression => returnszero("$(systemctl_path) is-active $(service)", "noshell");
+
+        "can_stop_service"      expression => returnszero("$(systemctl_path) show $(service) | /bin/grep -qi \"^CanStop=yes\"", "useshell");
+        "can_start_service"     expression => returnszero("$(systemctl_path) show $(service) | /bin/grep -qi \"^CanStart=yes\"", "useshell");
+        "can_reload_service"    expression => returnszero("$(systemctl_path) show $(service) | /bin/grep -qi \"^CanReload=yes\"", "useshell");
+
+        "request_start"     expression => strcmp("start", "$(state)");
+        "request_stop"      expression => strcmp("stop", "$(state)");
+        "request_reload"    expression => strcmp("reload", "$(state)");
+        "request_restart"   expression => strcmp("restart", "$(state)");
+        "request_disable"   expression => strcmp("disable", "$(state)");
+
+        "action_start"      expression => "request_start.!service_active";
+        "action_enable"     expression => "request_start.!service_enabled";
+        "action_stop"       expression => "(request_stop|request_disable).service_active";
+        "action_reload"     expression => "request_reload.service_active.can_reload_service";
+        "action_disable"    expression => "request_disable.!service_enabled";
+        "action_restart"    expression => "request_restart.service_active";
+
+    commands:
+        action_start::
+            "$(systemctl_path) start $(service)";
+
+        action_enable::
+            "$(systemctl_path) enable $(service)";
+
+        action_stop::
+            "$(systemctl_path) stop $(service)";
+
+        action_reload::
+            "$(systemctl_path) reload $(service)";
+
+        action_restart::
+            "$(systemctl_path) restart $(service)";
+
+        action_disable::
+            "$(systemctl_path) disable $(service)";
+
     reports:
-        "Being asked to promise service $(service) -> $(state)";
+        "Setting systemd service $(service) -> $(state)";
 }

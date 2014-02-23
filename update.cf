@@ -48,6 +48,14 @@ bundle common update_def
       comment => "Filename patterns to match when updating the policy (see update/update_policy.cf)",
       handle => "common_def_vars_input_name_patterns";
 
+      "templates_dir" string => "myTemplates",
+      comment => "We need to copy this specially",
+      handle => "update_var_templates_dir";
+
+      "templates_regex" string => "^/$(templates_dir)$",
+      comment => "For easy matching",
+      handle => "update_var_templates_regex";
+
       # the permissions for your masterfiles, which will propagate to inputs
       "masterfiles_perms_mode" string => "0600",
       handle => "common_def_vars_masterfiles_perms_mode";

@@ -22,6 +22,7 @@ bundle agent b03_base_packages
                 "lsof",
                 "strace",
                 "tuned",
+                "policycoreutils",
             };
 
     packages:

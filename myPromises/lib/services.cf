@@ -11,5 +11,5 @@ body service_method custom_service
 bundle agent custom_service_bundle(service, state)
 {
     reports:
-        "Being asked to promise service $(service) -> $(state)"
+        "Being asked to promise service $(service) -> $(state)";
 }

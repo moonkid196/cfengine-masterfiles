@@ -18,11 +18,11 @@ bundle agent c01_root_setup
                 copy_from       => backup_local_cp("$(root_templates)"),
                 depth_search    => recurse_with_base("inf"),
                 perms           => mog("0600", "root", "root"),
-                create          => "true";
+                create          => "true",
                 classes         => if_repaired("relabel_root_home");
 
     commands:
         # Should probably just check for selinux being on
         fedora_19::
-            "/usr/sbin/restorecon -R $(root_home_dir)"
+            "/usr/sbin/restorecon -R $(root_home_dir)";
 }

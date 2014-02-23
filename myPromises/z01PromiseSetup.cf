@@ -26,5 +26,6 @@ bundle common z01_promise_setup
         "my_lib_files" slist =>
         {
             "myPromises/lib/files.cf",
+            "myPromises/lib/services.cf",
         };
 }

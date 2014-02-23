@@ -7,7 +7,6 @@ bundle agent b03_base_packages
             "baburke_packages" slist =>
             {
                 "nc",
-                "postfix",
                 "rsync",
                 "curl",
                 "tmux",
@@ -18,7 +17,6 @@ bundle agent b03_base_packages
                 "zsh",
                 "bwm-ng",
                 "iotop",
-                "ntp",
                 "lsof",
                 "strace",
                 "tuned",

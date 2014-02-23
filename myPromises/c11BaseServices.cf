@@ -1,0 +1,45 @@
+# vim:syntax=cf3
+
+
+bundle agent c11_base_services
+{
+    methods:
+        any::
+            "c11SetupPostfix"   usebundle => c11_setup_postfix;
+            "c11SetupNtp"       usebundle => c11_setup_ntp;
+            "c11SetupSshd"      usebundle => c11_setup_sshd;
+}
+
+
+bundle agent c11_setup_postfix
+{
+    vars:
+        fedora_19::
+            "package_name"  string => "postfix";
+            "service_name"  string => "postfix";
+            "main_cf"       string => "/etc/postfix/main.cf";
+
+    services:
+        "$(service_name)"
+            depends_on => { "c11_setup_postfix_packages" },
+            service_policy => "start",
+            service_method => custom_service;
+
+    packages:
+        redhat::
+            "$(package_name)"
+                comment => "Ensure Postfix is installed",
+                handle => "c11_setup_postfix_packages",
+                package_policy => "add",
+                package_method => generic;
+}
+
+
+bundle agent c11_setup_ntp
+{
+}
+
+
+bundle agent c11_setup_sshd
+{
+}

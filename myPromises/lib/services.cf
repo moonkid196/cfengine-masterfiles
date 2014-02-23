@@ -2,7 +2,7 @@
 
 body service_method custom_service
 {
-    service_autostart_policy => "boot_time";
+    service_autostart_policy => "none";
     service_bundle => custom_service_bundle("$(this.promiser)", "$(this.service_policy)");
 
 }
@@ -12,7 +12,7 @@ bundle agent custom_service_bundle(service, state)
 {
     methods:
         fedora_19::
-            "SystemdService" usebundle => systemd_service(service, state);
+            "SystemdService" usebundle => systemd_service("$(service)", "$(state)");
 }
 
 
@@ -22,8 +22,8 @@ bundle agent systemd_service(service,state)
         "systemctl_path" string => "/bin/systemctl";
 
     classes:
-        "service_enabled"   expression => returnszero("$(systemctl_path) is-enabled $(service)", "noshell");
-        "service_active"    expression => returnszero("$(systemctl_path) is-active $(service)", "noshell");
+        "service_enabled"   expression => returnszero("$(systemctl_path) is-enabled $(service) > /dev/null", "useshell");
+        "service_active"    expression => returnszero("$(systemctl_path) is-active $(service) > /dev/null", "useshell");
 
         "can_stop_service"      expression => returnszero("$(systemctl_path) show $(service) | /bin/grep -qi \"^CanStop=yes\"", "useshell");
         "can_start_service"     expression => returnszero("$(systemctl_path) show $(service) | /bin/grep -qi \"^CanStart=yes\"", "useshell");

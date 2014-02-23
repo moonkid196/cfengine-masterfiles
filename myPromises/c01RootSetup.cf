@@ -23,6 +23,6 @@ bundle agent c01_root_setup
 
     commands:
         # Should probably just check for selinux being on
-        fedora_19::
+        fedora_19.relabel_root_home::
             "/usr/sbin/restorecon -R $(root_home_dir)";
 }

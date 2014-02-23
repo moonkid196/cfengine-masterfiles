@@ -1,0 +1,50 @@
+# vim:syntax=cf3
+
+bundle agent c12_base_services
+{
+    vars:
+        fedora_19::
+            "service_array" slist =>
+            {
+                "postfix",
+                "ntp",
+                "ssh",
+            };
+
+            "base_services[postfix][package]"  string => "postfix";
+            "base_services[postfix][service]"  string => "postfix";
+            "base_services[postfix][conf]"     string => "postfix";
+
+            "base_services[ntp][package]"  string => "ntp";
+            "base_services[ntp][service]"  string => "ntpd";
+            "base_services[ntp][conf]"     string => "/etc/postfix/main.cf";
+
+            "base_services[ssh][package]"  string => "openssh-server";
+            "base_services[ssh][service]"  string => "sshd";
+            "base_services[ssh][conf]"     string => "/etc/ssh/sshd_config";
+
+    methods:
+        any::
+            "c11SetupBaseServices" usebundle => c11_setup_service("$(service_array)", "c12_base_services.base_services");
+}
+
+
+bundle agent c11_setup_service(service, service_matrix)
+{
+    services:
+        "$($(service_matrix)[$(service)][service])"
+                depends_on => { "c11_setup_$(service)_package" },
+                   comment => "Start the service we want",
+            service_policy => "start",
+            service_method => custom_service;
+
+    packages:
+        "$($(service_matrix)[$(service)][package])"
+                   comment => "Ensure $(service) is installed",
+                    handle => "c11_setup_$(service)_package",
+            package_policy => "add",
+            package_method => generic;
+
+    reports:
+        "$(service): Service=$($(service_matrix)[$(service)][service]), Package=$($(service_matrix)[$(service)][package])";
+}

@@ -3,11 +3,24 @@
 bundle agent c01_root_setup
 {
     vars:
-        "root_home_dir"     string => "/root";
-        "inputs_dir"        string => "/var/cfengine/inputs";
+        any::
+            "root_home_dir"     string => "/root";
+            "inputs_dir"        string => "/var/cfengine/inputs";
 
-        "templates_dir"     string => "$(inputs_dir)/myTemplates";
-        "root_templates"    string => "$(templates_dir)/root";
+            "templates_dir"     string => "$(inputs_dir)/myTemplates";
+            "root_templates"    string => "$(templates_dir)/root";
+
+            "passwd_shell_field"   int => "7";
+            "root_passwd"       string => execresult("$(getent) root passwd", "useshell");
+            "root_passwd_array"  slist => splitstring("$(root_passwd)", ":", "7");
+
+        fedora_19::
+            "getent" string => "/usr/bin/getent";
+            "zsh"    string => "/bin/zsh";
+
+    classes:
+        any::
+            "root_has_zsh" expression => strcmp("$(zsh)", "$(root_passwd_array)[$(passwd_shell_field)]");
 
     files:
         any::

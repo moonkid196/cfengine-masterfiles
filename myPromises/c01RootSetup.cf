@@ -34,6 +34,13 @@ bundle agent c01_root_setup
                 create          => "true",
                 classes         => if_repaired("relabel_root_home");
 
+            "/etc/passwd"
+                depends_on => { "base_packages_install" },
+                   comment => "Set root shell to $(zsh)",
+                    handle => "root_setup_add_zsh",
+                   changes => detect_all_change,
+                 edit_file => set_user_field("root", "$(passwd_shell_field)", "$(zsh)");
+
     commands:
         # Should probably just check for selinux being on
         fedora_19.relabel_root_home::

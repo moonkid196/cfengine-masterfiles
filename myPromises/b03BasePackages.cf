@@ -26,6 +26,7 @@ bundle agent b03_base_packages
     packages:
         any::
             "$(baburke_packages)"
+                handle          => "base_packages_install",
                 package_policy  => "add",
                 package_method  => generic;
 }

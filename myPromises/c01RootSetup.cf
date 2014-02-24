@@ -34,15 +34,21 @@ bundle agent c01_root_setup
                 create          => "true",
                 classes         => if_repaired("relabel_root_home");
 
+        any.!root_has_zsh::
             "/etc/passwd"
                 depends_on => { "base_packages_install" },
                    comment => "Set root shell to $(zsh)",
                     handle => "root_setup_add_zsh",
+                   classes => if_repaired("root_setup_added_zsh"),
                    changes => detect_all_change,
-                 edit_file => set_user_field("root", "$(passwd_shell_field)", "$(zsh)");
+                 edit_line => set_user_field("root", "$(passwd_shell_field)", "$(zsh)");
 
     commands:
         # Should probably just check for selinux being on
         fedora_19.relabel_root_home::
             "/usr/sbin/restorecon -R $(root_home_dir)";
+
+    reports:
+        root_setup_added_zsh::
+            "Setting root's shell to $(zsh)";
 }

@@ -32,14 +32,14 @@ bundle agent c12_base_services
 bundle agent c11_setup_service(service, service_matrix)
 {
     services:
-        "$($(service_matrix)[$(service)][service])"
+        "$($(service_matrix)[$(c11_setup_service.service)][service])"
                 depends_on => { "c11_setup_$(service)_package" },
                    comment => "Start the service we want",
             service_policy => "start",
             service_method => custom_service;
 
     packages:
-        "$($(service_matrix)[$(service)][package])"
+        "$($(service_matrix)[$(c11_setup_service.service)][package])"
                    comment => "Ensure $(service) is installed",
                     handle => "c11_setup_$(service)_package",
             package_policy => "add",

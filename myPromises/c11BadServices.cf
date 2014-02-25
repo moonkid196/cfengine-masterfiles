@@ -3,19 +3,20 @@
 # File to disable services we don't want running
 #
 
-bunble agent c11_bad_services
+bundle agent c11_bad_services
 {
     vars:
         fedora_19::
-            services_to_stop slist =>
+            "services_to_stop" slist =>
             {
                 "sendmail",
                 "chronyd",
             };
 
-    methods:
-        "$(services_to_stop)"
-            usebundle => custom_service_bundle("$(this.promiser)", "stop"),
-              comment => "Stopping conflicting or unneeded services",
-               handle => "c11_bad_services_$(this.promiser)";
+    services:
+        any::
+            "$(services_to_stop)"
+                       comment => "Stopping conflicting or unneeded services",
+                service_policy => "disable",
+                service_method => custom_service;
 }

@@ -113,7 +113,7 @@ mail_owner = postfix
 #inet_interfaces = all
 #inet_interfaces = $myhostname
 #inet_interfaces = $myhostname, localhost
-inet_interfaces = localhost
+inet_interfaces = loopback-only
 
 # Enable IPv4, and IPv6 if supported
 inet_protocols = all
@@ -161,7 +161,7 @@ inet_protocols = all
 #
 # See also below, section "REJECTING MAIL FOR UNKNOWN LOCAL USERS".
 #
-mydestination = $myhostname, localhost.$mydomain, localhost
+mydestination = 
 #mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 #mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain,
 #	mail.$mydomain, www.$mydomain, ftp.$mydomain
@@ -315,6 +315,7 @@ unknown_local_recipient_reject_code = 550
 #relayhost = [mailserver.isp.tld]
 #relayhost = uucphost
 #relayhost = [an.ip.add.ress]
+relayhost = [smtp.baburke.net]
 
 # REJECTING UNKNOWN RELAY USERS
 #
@@ -677,3 +678,8 @@ sample_directory = /usr/share/doc/postfix-2.10.2/samples
 # readme_directory: The location of the Postfix README files.
 #
 readme_directory = /usr/share/doc/postfix-2.10.2/README_FILES
+
+smtp_tls_CAfile = /etc/pki/tls/certs/bburke.crt
+smtp_tls_mandatory_ciphers = HIGH
+smtp_tls_mandatory_protocols = !SSLv3, !SSLv2
+smtp_tls_security_level = secure

@@ -72,11 +72,9 @@ AuthorizedKeysFile	.ssh/authorized_keys
 # To disable tunneled clear text passwords, change to no here!
 #PasswordAuthentication yes
 #PermitEmptyPasswords no
-PasswordAuthentication yes
 
 # Change to no to disable s/key passwords
 #ChallengeResponseAuthentication yes
-ChallengeResponseAuthentication no
 
 # Kerberos options
 #KerberosAuthentication no
@@ -87,9 +85,7 @@ ChallengeResponseAuthentication no
 
 # GSSAPI options
 #GSSAPIAuthentication no
-GSSAPIAuthentication yes
 #GSSAPICleanupCredentials yes
-GSSAPICleanupCredentials yes
 #GSSAPIStrictAcceptorCheck yes
 #GSSAPIKeyExchange no
 
@@ -111,7 +107,6 @@ UsePAM yes
 #AllowTcpForwarding yes
 #GatewayPorts no
 #X11Forwarding no
-X11Forwarding yes
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PrintMotd yes
@@ -152,3 +147,12 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	X11Forwarding no
 #	AllowTcpForwarding no
 #	ForceCommand cvs server
+
+[%CFEngine baburke.servers:: %]
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+[%CFEngine baburke.!servers:: %]
+X11Forwarding yes
+Match User root
+    PasswordAuthentication no

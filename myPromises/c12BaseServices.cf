@@ -13,11 +13,11 @@ bundle agent c12_base_services
 
             "base_services[postfix][package]"  string => "postfix";
             "base_services[postfix][service]"  string => "postfix";
-            "base_services[postfix][conf]"     string => "postfix";
+            "base_services[postfix][conf]"     string => "/etc/postfix/main.cf";
 
             "base_services[ntp][package]"  string => "ntp";
             "base_services[ntp][service]"  string => "ntpd";
-            "base_services[ntp][conf]"     string => "/etc/postfix/main.cf";
+            "base_services[ntp][conf]"     string => "/etc/ntp.conf";
 
             "base_services[ssh][package]"  string => "openssh-server";
             "base_services[ssh][service]"  string => "sshd";
@@ -38,12 +38,24 @@ bundle agent c11_setup_service(service, service_matrix)
             service_policy => "start",
             service_method => custom_service;
 
+        "base_services_fixed_config_$($(service_matrix)[$(c11_setup_service.service)][service])"
+                   comment => "Restart a service if we've messed with the config file",
+            service_policy => "restart",
+            service_method => custom_service;
+
     packages:
         "$($(service_matrix)[$(c11_setup_service.service)][package])"
                    comment => "Ensure $(service) is installed",
                     handle => "c11_setup_$(service)_package",
             package_policy => "add",
             package_method => generic;
+
+    files:
+        "$($(service_matrix)[$(c11_setup_service.service)][conf])"
+            edit_defaults => backup_timestamp,
+                  changes => detect_all_changes,
+            edit_template => "$(global_vars.template_dir)/$(this.promiser)"
+                  classes => if_repaired("base_services_fixed_config_$($(service_matrix)[$(c11_setup_service.service)][service])");
 
     reports:
         "$(service): Service=$($(service_matrix)[$(service)][service]), Package=$($(service_matrix)[$(service)][package])";

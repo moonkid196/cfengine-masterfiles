@@ -7,7 +7,7 @@ bundle agent c02_files_setup
 {
     vars:
         fedora_19::
-            file_list slist =>
+            "file_list" slist =>
             {
                 "/etc/pki/tls/certs/bburke.crt",
             };

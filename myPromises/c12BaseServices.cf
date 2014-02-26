@@ -25,22 +25,26 @@ bundle agent c12_base_services
 
     methods:
         any::
-            "c11SetupBaseServices" usebundle => c11_setup_service("$(service_array)", "c12_base_services.base_services");
+            "c11SetupBaseServices"  usebundle => c11_setup_service("$(service_array)", "c12_base_services.base_services");
 }
 
 
 bundle agent c11_setup_service(service, service_matrix)
 {
     services:
-        "$($(service_matrix)[$(c11_setup_service.service)][service])"
-                depends_on => { "c11_setup_$(service)_package" },
-                   comment => "Start the service we want",
-            service_policy => "start",
-            service_method => custom_service;
+        any::
+            "$($(service_matrix)[$(c11_setup_service.service)][service])"
+                    depends_on => { "c11_setup_$(service)_package" },
+                        handle => "base_services_starting_$(service)",
+                       comment => "Start the service we want",
+                service_policy => "start",
+                service_method => custom_service;
 
-        "base_services_fixed_config_$($(service_matrix)[$(c11_setup_service.service)][service])"
-                   comment => "Restart a service if we've messed with the config file",
-            service_policy => "restart",
+        base_services_fixed_config::
+            "$($(service_matrix)[$(c11_setup_service.service)][service])"
+                   comment => "Reload a service if we've messed with the config file",
+                depends_on => { "base_services_starting_$(service)" },
+            service_policy => "reload",
             service_method => custom_service;
 
     packages:
@@ -53,9 +57,9 @@ bundle agent c11_setup_service(service, service_matrix)
     files:
         "$($(service_matrix)[$(c11_setup_service.service)][conf])"
             edit_defaults => backup_timestamp,
-                  changes => detect_all_changes,
-            edit_template => "$(global_vars.template_dir)/$(this.promiser)"
-                  classes => if_repaired("base_services_fixed_config_$($(service_matrix)[$(c11_setup_service.service)][service])");
+                  changes => detect_all_change,
+            edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$($(service_matrix)[$(c11_setup_service.service)][conf])",
+                  classes => if_repaired("base_services_fixed_config");
 
     reports:
         "$(service): Service=$($(service_matrix)[$(service)][service]), Package=$($(service_matrix)[$(service)][package])";

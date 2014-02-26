@@ -1,4 +1,6 @@
 # vim:syntax=cf3
+#
+# TODO ensure permissions
 
 bundle agent c12_base_services
 {

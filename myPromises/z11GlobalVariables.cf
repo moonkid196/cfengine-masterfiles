@@ -8,4 +8,5 @@ bundle common global_vars
         "templates_dir"     string => "$(this.inputs_dir)/myTemplates";
         "promises_dir"      string => "$(this.inputs_dir)/myPromises";
         "custom_lib"        string => "$(this.promises_dir)/lib";
+        "generic_dir"       string => "$(this.templates_dir)/generic";
 }

@@ -20,8 +20,7 @@ bundle agent b03_base_packages
                 "lsof",
                 "strace",
                 "tuned",
-                "policycoreutils",
-                "libsemanage-python",
+                "policycoreutils-python",
             };
 
     packages:

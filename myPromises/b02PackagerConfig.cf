@@ -19,6 +19,10 @@ bundle agent b02_packager_config
     commands:
         fedora_19.convert_groups::
             "/usr/bin/yum groups mark convert";
+
+    reports:
+        any::
+            "Checking configuration of system packager";
 }
 
 

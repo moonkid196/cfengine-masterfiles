@@ -16,6 +16,10 @@ bundle agent c02_files_setup
         "c02FilePlacement"
             usebundle => c02_file_placement("$(file_list)"),
                handle => "files_setup";
+
+    reports:
+        any::
+            "Checking for common files needed on many systems";
 }
 
 

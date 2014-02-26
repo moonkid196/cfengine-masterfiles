@@ -47,6 +47,9 @@ bundle agent c01_root_setup
             "/usr/sbin/restorecon -R $(root_home_dir)";
 
     reports:
+        any::
+            "Checking root's environment";
+
         root_setup_added_zsh::
             "Setting root's shell to $(zsh)";
 }

@@ -35,6 +35,10 @@ bundle agent b01_repo_config
     commands:
         clear_package_cache.redhat::
             "/usr/bin/yum clean all";
+
+    reports:
+        internal::
+            "Pointing local machines to local mirror";
 }
 
 

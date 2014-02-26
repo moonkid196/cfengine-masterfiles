@@ -19,4 +19,8 @@ bundle agent c11_bad_services
                        comment => "Stopping conflicting or unneeded services",
                 service_policy => "disable",
                 service_method => custom_service;
+
+    reports:
+        any::
+            "Ensuring services we don't want to run, aren't";
 }

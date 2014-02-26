@@ -30,6 +30,10 @@ bundle agent c12_base_services
             "c11SetupBaseServices"
                  usebundle => c11_setup_service("$(service_array)", "c12_base_services.base_services"),
                 depends_on => { "files_setup" };
+
+    reports:
+        any::
+            "Making sure common services are running and configured";
 }
 
 

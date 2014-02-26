@@ -5,10 +5,8 @@ bundle agent c01_root_setup
     vars:
         any::
             "root_home_dir"     string => "/root";
-            "inputs_dir"        string => "/var/cfengine/inputs";
 
-            "templates_dir"     string => "$(inputs_dir)/myTemplates";
-            "root_templates"    string => "$(templates_dir)/root";
+            "root_templates"    string => "$(global_vars.templates_dir)/root";
 
             "passwd_shell_field"   int => "7";
             "root_passwd"       string => execresult("$(getent) root passwd", "useshell");

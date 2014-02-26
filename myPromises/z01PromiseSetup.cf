@@ -6,6 +6,7 @@ bundle common z01_promise_setup
         "bundles" slist =>
         {
             "z02_global_classes",
+            "global_vars",
             "a01_hello",
             "b01_repo_config",
             "b02_packager_config",
@@ -18,6 +19,7 @@ bundle common z01_promise_setup
         "promise_files" slist =>
         {
             "myPromises/z02GlobalClasses.cf",
+            "myPromises/z11GlobalVariables.cf",
             "myPromises/a01Hello.cf",
             "myPromises/b01RepoConfig.cf",
             "myPromises/b02PackagerConfig.cf",

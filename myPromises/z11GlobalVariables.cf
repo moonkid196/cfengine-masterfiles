@@ -1,0 +1,11 @@
+# vim:syntax=cf3
+
+bundle common global_vars
+{
+    vars:
+        "masterfiles_dir"   string => "/var/cfengine/masterfiles";
+        "inputs_dir"        string => "/var/cfengine/inputs";
+        "templates_dir"     string => "$(this.inputs_dir)/myTemplates";
+        "promises_dir"      string => "$(this.inputs_dir)/myPromises";
+        "custom_lib"        string => "$(this.promises_dir)/lib";
+}

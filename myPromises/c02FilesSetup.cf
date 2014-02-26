@@ -13,7 +13,9 @@ bundle agent c02_files_setup
             };
 
     methods:
-        "c02FilePlacement" usebundle => c02_file_placement("$(file_list)");
+        "c02FilePlacement"
+            usebundle => c02_file_placement("$(file_list)"),
+               handle => "files_setup";
 }
 
 
@@ -28,5 +30,6 @@ bundle agent c02_file_placement(file_path)
             handle => "files_setup_$(base_name)",
             changes => detect_all_change,
             copy_from => no_backup_dcp("$(global_vars.generic_dir)/$(base_name)"),
+            perms => mog("0644", "root", "root"),
             create => "true";
 }

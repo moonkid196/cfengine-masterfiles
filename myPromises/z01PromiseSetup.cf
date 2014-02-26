@@ -12,6 +12,7 @@ bundle common z01_promise_setup
             "b02_packager_config",
             "b03_base_packages",
             "c01_root_setup",
+            "c02_files_setup",
             "c11_bad_services",
             "c12_base_services",
         };
@@ -25,6 +26,7 @@ bundle common z01_promise_setup
             "myPromises/b02PackagerConfig.cf",
             "myPromises/b03BasePackages.cf",
             "myPromises/c01RootSetup.cf",
+            "myPromises/c02FilesSetup.cf",
             "myPromises/c11BadServices.cf",
             "myPromises/c12BaseServices.cf",
         };

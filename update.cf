@@ -1,4 +1,5 @@
 ###############################################################################
+# vim:syntax=cf3
 #
 #   update.cf - Basic Update Policy
 #
@@ -35,6 +36,7 @@ body agent control
 {
       ifelapsed => "1";
       skipidentify => "true";
+
 }
 
 #############################################################################
@@ -108,7 +110,7 @@ bundle common update_def
 
       # NOTE THAT THIS CLASS ALSO NEEDS TO BE SET IN def.cf
 
-      "cfengine_internal_encrypt_transfers" expression => "!any";
+      "cfengine_internal_encrypt_transfers" expression => "any";
 
       # Purge policies that don't exist on the server side.
       # you can also request it from the command line with
@@ -116,7 +118,7 @@ bundle common update_def
 
       # NOTE THAT THIS CLASS ALSO NEEDS TO BE SET IN def.cf
 
-      "cfengine_internal_purge_policies" expression => "!any";
+      "cfengine_internal_purge_policies" expression => "any";
 
       # Preserve permissions of the policy server's masterfiles.
       # you can also request it from the command line with
@@ -124,7 +126,7 @@ bundle common update_def
 
       # NOTE THAT THIS CLASS ALSO NEEDS TO BE SET IN def.cf
 
-      "cfengine_internal_preserve_permissions" expression => "!any";
+      "cfengine_internal_preserve_permissions" expression => "any";
 
 }
 

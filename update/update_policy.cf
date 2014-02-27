@@ -378,7 +378,7 @@ body depth_search u_recurse(d)
 body depth_search u_recurse_no_templates(d)
 {
       depth => "$(d)";
-      exclude_dirs => { "\.svn", "\.git", "\.hg", "\.bzr" , "$(update_def.templates_regex)"};
+      exclude_dirs => { "\.svn", "\.git", "git-core", "$(update_def.templates_regex)"};
 }
 
 #########################################################

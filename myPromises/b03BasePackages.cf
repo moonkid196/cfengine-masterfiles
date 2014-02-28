@@ -21,6 +21,7 @@ bundle agent b03_base_packages
                 "strace",
                 "tuned",
                 "policycoreutils-python",
+                "logwatch",
             };
 
     packages:

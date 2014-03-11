@@ -22,6 +22,7 @@ bundle agent b03_base_packages
                 "tuned",
                 "policycoreutils-python",
                 "logwatch",
+                "net-tools",
             };
 
     packages:

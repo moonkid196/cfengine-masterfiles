@@ -65,7 +65,7 @@ bundle agent c11_setup_service(service, service_matrix)
     files:
         "$($(service_matrix)[$(c11_setup_service.service)][conf])"
             edit_defaults => backup_timestamp,
-                  changes => detect_all_change,
+                  changes => diff,
             edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$($(service_matrix)[$(c11_setup_service.service)][conf])",
                   classes => if_repaired("base_services_fixed_config");
 

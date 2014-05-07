@@ -6,7 +6,7 @@ bundle agent b03_base_packages
         fedora_19::
             "baburke_packages" slist =>
             {
-                "nc",
+                "nmap-ncat",
                 "rsync",
                 "curl",
                 "tmux",

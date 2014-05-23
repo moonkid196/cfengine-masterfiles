@@ -5,7 +5,7 @@
 bundle agent c12_base_services
 {
     vars:
-        any::
+        secondpass::
             "service" slist => getindices("$(base_services)");
 
         fedora_19::
@@ -20,6 +20,9 @@ bundle agent c12_base_services
             "base_services[ssh][id]"      string => "sshd";
             "base_services[ssh][package]" string => "openssh-server";
             "base_services[ssh][conf]"    string => "/etc/ssh/sshd_config";
+
+    classes:
+        "secondpass" expression => isvariable("base_services");
 
     files:
         "$(base_services[$(service)])"

@@ -5,70 +5,50 @@
 bundle agent c12_base_services
 {
     vars:
+        any::
+            "service" slist => getindices("$(base_services)");
+
         fedora_19::
-            "service_array" slist =>
-            {
-                "postfix",
-                "ntp",
-                "ssh",
-            };
+            "base_services[postfix][id]"      string => "postfix";
+            "base_services[postfix][package]" string => "postfix";
+            "base_services[postfix][conf]"    string => "/etc/postfix/main.cf";
 
-            "base_services[postfix][package]"  string => "postfix";
-            "base_services[postfix][service]"  string => "postfix";
-            "base_services[postfix][conf]"     string => "/etc/postfix/main.cf";
+            "base_services[ntp][id]"      string => "ntpd";
+            "base_services[ntp][package]" string => "ntp";
+            "base_services[ntp][conf]"    string => "/etc/ntp.conf";
 
-            "base_services[ntp][package]"  string => "ntp";
-            "base_services[ntp][service]"  string => "ntpd";
-            "base_services[ntp][conf]"     string => "/etc/ntp.conf";
+            "base_services[ssh][id]"      string => "sshd";
+            "base_services[ssh][package]" string => "openssh-server";
+            "base_services[ssh][conf]"    string => "/etc/ssh/sshd_config";
 
-            "base_services[ssh][package]"  string => "openssh-server";
-            "base_services[ssh][service]"  string => "sshd";
-            "base_services[ssh][conf]"     string => "/etc/ssh/sshd_config";
-
-    methods:
-        any::
-            "c11SetupBaseServices"
-                 usebundle => c11_setup_service("$(service_array)", "c12_base_services.base_services"),
-                depends_on => { "files_setup" };
-
-    reports:
-        any::
-            "Making sure common services are running and configured";
-}
-
-
-bundle agent c11_setup_service(service, service_matrix)
-{
-    services:
-        any::
-            "$($(service_matrix)[$(c11_setup_service.service)][service])"
-                    depends_on => { "c11_setup_$(service)_package" },
-                        handle => "base_services_starting_$(service)",
-                       comment => "Start the service we want",
-                service_policy => "start",
-                service_method => custom_service;
-
-        base_services_fixed_config::
-            "$($(service_matrix)[$(c11_setup_service.service)][service])"
-                   comment => "Reload a service if we've messed with the config file",
-                depends_on => { "base_services_starting_$(service)" },
-            service_policy => "reload",
-            service_method => custom_service;
+    files:
+        "$(base_services[$(service)])"
+               depends_on => { "files_setup" };
+            edit_defaults => empty,
+                  changes => diff,
+            edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$(base_services[$(service)][conf])",
+                  classes => if_repaired("base_services_fixed_$(service)");
 
     packages:
-        "$($(service_matrix)[$(c11_setup_service.service)][package])"
+        "$(base_services[$(service)][package])"
                    comment => "Ensure $(service) is installed",
                     handle => "c11_setup_$(service)_package",
             package_policy => "add",
-            package_method => generic;
+            package_method => yum_rpm;
 
-    files:
-        "$($(service_matrix)[$(c11_setup_service.service)][conf])"
-            edit_defaults => backup_timestamp,
-                  changes => diff,
-            edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$($(service_matrix)[$(c11_setup_service.service)][conf])",
-                  classes => if_repaired("base_services_fixed_config");
+    services:
+        any::
+            "$(base_services[$(service)])"
+                   comment => "Restart a service if we've messed with the config file",
+                depends_on => { "c11_setup_$(service)_package", "base_services_starting_$(service)" },
+            service_policy => "restart",
+            service_method => custom_service,
+                ifvarclass => "base_services_fixed_$(service)";
 
     reports:
-        "$(service): Service=$($(service_matrix)[$(service)][service]), Package=$($(service_matrix)[$(service)][package])";
+        verbose_mode::
+            "Making sure common services are running and configured";
+
+        inform_mode::
+            "$(service): Package=$(base_services[$(service)][package])";
 }

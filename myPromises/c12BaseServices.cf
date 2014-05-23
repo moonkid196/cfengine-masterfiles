@@ -23,7 +23,7 @@ bundle agent c12_base_services
 
     files:
         "$(base_services[$(service)])"
-               depends_on => { "files_setup" };
+               depends_on => { "files_setup" },
             edit_defaults => empty,
                   changes => diff,
             edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$(base_services[$(service)][conf])",

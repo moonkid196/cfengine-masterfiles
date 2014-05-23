@@ -25,7 +25,7 @@ bundle agent c12_base_services
         "secondpass" expression => isvariable("base_services");
 
     files:
-        "$(base_services[$(service)])"
+        "$(base_services[$(service)][conf])"
                depends_on => { "files_setup" },
             edit_defaults => empty,
                   changes => diff,
@@ -41,7 +41,7 @@ bundle agent c12_base_services
 
     services:
         any::
-            "$(base_services[$(service)])"
+            "$(base_services[$(service)][id])"
                    comment => "Restart a service if we've messed with the config file",
                 depends_on => { "c11_setup_$(service)_package", "base_services_starting_$(service)" },
             service_policy => "restart",

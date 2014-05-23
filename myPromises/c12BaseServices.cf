@@ -25,22 +25,24 @@ bundle agent c12_base_services
         "secondpass" expression => isvariable("base_services");
 
     files:
-        "$(base_services[$(service)][conf])"
-               depends_on => { "files_setup" },
-            edit_defaults => empty,
-                  changes => diff,
-            edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$(base_services[$(service)][conf])",
-                  classes => if_repaired("base_services_fixed_$(service)");
+        secondpass::
+            "$(base_services[$(service)][conf])"
+                   depends_on => { "files_setup" },
+                edit_defaults => empty,
+                      changes => diff,
+                edit_template => "$(global_vars.templates_dir)/$(sys.flavor)/$(base_services[$(service)][conf])",
+                      classes => if_repaired("base_services_fixed_$(service)");
 
     packages:
-        "$(base_services[$(service)][package])"
-                   comment => "Ensure $(service) is installed",
-                    handle => "c11_setup_$(service)_package",
-            package_policy => "add",
-            package_method => yum_rpm;
+        secondpass::
+            "$(base_services[$(service)][package])"
+                       comment => "Ensure $(service) is installed",
+                        handle => "c11_setup_$(service)_package",
+                package_policy => "add",
+                package_method => yum_rpm;
 
     services:
-        any::
+        secondpass::
             "$(base_services[$(service)][id])"
                    comment => "Restart a service if we've messed with the config file",
                 depends_on => { "c11_setup_$(service)_package", "base_services_starting_$(service)" },
@@ -52,6 +54,6 @@ bundle agent c12_base_services
         verbose_mode::
             "Making sure common services are running and configured";
 
-        inform_mode::
+        secondpass.inform_mode::
             "$(service): Package=$(base_services[$(service)][package])";
 }

@@ -30,7 +30,8 @@ bundle agent b03_base_packages
             "$(baburke_packages)"
                 handle          => "base_packages_install",
                 package_policy  => "add",
-                package_method  => generic;
+                package_method  => yum_rpm,
+                ifvarclass      => "redhat";
 
     reports:
         "Ensuring base-line packages are installed for all machines";

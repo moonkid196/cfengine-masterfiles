@@ -38,13 +38,13 @@ bundle agent setup_ldap_cacerts
         classes       => if_repaired("bburke_ca_file_added");
 
       "$(b04_ldap_setup.cacertdir)/$(bburke_hash).0"
-        comment   => "Create LDAP cacert hash file/link",
-        handle    => "b04_setup_ldap_cacerts_bburke_hash",
-        create    => "true",
-        link_from => ln_s("$(bburke_cafile)");
+        comment    => "Create LDAP cacert hash file/link",
+        handle     => "b04_setup_ldap_cacerts_bburke_hash",
+        link_from  => ln_s("$(bburke_cafile)"),
+        ifvarclass => "bburke_ca_present";
 
   commands:
     redhat::
-      "$(global_vars.restorecon") -R $(b04_ldap_setup.cacertdir)"
+      "$(global_vars.restorecon) -R $(b04_ldap_setup.cacertdir)"
         ifvarclass => "bburke_ca_file_added";
 }

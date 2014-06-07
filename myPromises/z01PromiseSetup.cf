@@ -1,39 +1,41 @@
-# vim:syntax=cf3
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
 
 bundle common z01_promise_setup
 {
-    vars:
-        "bundles" slist =>
-        {
-            "z02_global_classes",
-            "global_vars",
-            "a01_hello",
-            "b01_repo_config",
-            "b02_packager_config",
-            "b03_base_packages",
-            "c01_root_setup",
-            "c02_files_setup",
-            "c11_bad_services",
-            "c12_base_services",
-        };
+  vars:
+    "bundles" slist =>
+    {
+      "z02_global_classes",
+      "global_vars",
+      "a01_hello",
+      "b01_repo_config",
+      "b02_packager_config",
+      "b03_base_packages",
+      "b04_ldap_setup",
+      "c01_root_setup",
+      "c02_files_setup",
+      "c11_bad_services",
+      "c12_base_services",
+    };
 
-        "promise_files" slist =>
-        {
-            "myPromises/z02GlobalClasses.cf",
-            "myPromises/z11GlobalVariables.cf",
-            "myPromises/a01Hello.cf",
-            "myPromises/b01RepoConfig.cf",
-            "myPromises/b02PackagerConfig.cf",
-            "myPromises/b03BasePackages.cf",
-            "myPromises/c01RootSetup.cf",
-            "myPromises/c02FilesSetup.cf",
-            "myPromises/c11BadServices.cf",
-            "myPromises/c12BaseServices.cf",
-        };
+    "promise_files" slist =>
+    {
+      "myPromises/z02GlobalClasses.cf",
+      "myPromises/z11GlobalVariables.cf",
+      "myPromises/a01Hello.cf",
+      "myPromises/b01RepoConfig.cf",
+      "myPromises/b02PackagerConfig.cf",
+      "myPromises/b03BasePackages.cf",
+      "myPromises/b04LdapSetup.cf",
+      "myPromises/c01RootSetup.cf",
+      "myPromises/c02FilesSetup.cf",
+      "myPromises/c11BadServices.cf",
+      "myPromises/c12BaseServices.cf",
+    };
 
-        "my_lib_files" slist =>
-        {
-            "myPromises/lib/files.cf",
-            "myPromises/lib/services.cf",
-        };
+    "my_lib_files" slist =>
+    {
+      "myPromises/lib/files.cf",
+      "myPromises/lib/services.cf",
+    };
 }

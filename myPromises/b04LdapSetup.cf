@@ -30,7 +30,6 @@ bundle agent setup_ldap_cacerts
       "$(bburke_cafile)"
         comment       => "Bring in any new CA cert files",
         handle        => "b04_setup_ldap_cacerts_bburke",
-        create        => "true",
         copy_from     => local_dcp("$(global_vars.generic_dir)/bburke.crt"),
         edit_defaults => empty,
         changes       => detect_all_change,

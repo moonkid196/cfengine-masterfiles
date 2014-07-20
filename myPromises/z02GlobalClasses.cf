@@ -1,51 +1,46 @@
-# vim:syntax=cf3
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
 
 bundle common z02_global_classes
 {
-    classes:
-        "baburke" or =>
-        {
-            "bluestar",
-            "kontinuum",
-            "hildegarde",
-            "flea",
-            "escobar",
-            "ashra",
-            "rhys",
-        };
+  classes:
+    "baburke"         or => {
+                              "bluestar",
+                              "kontinuum",
+                              "hildegarde",
+                              "flea",
+                              "escobar",
+                              "ashra",
+                              "rhys",
+                            };
 
-        "servers" or =>
-        {
-            "bluestar",
-            "kontinuum",
-            "hildegarde",
-            "escobar",
-            "ashra",
-            "rhys",
-        };
+    "servers"         or => {
+                              "bluestar",
+                              "kontinuum",
+                              "hildegarde",
+                              "escobar",
+                              "ashra",
+                              "rhys",
+                            };
 
-        "virtual_servers" or =>
-        {
-            "kontinuum",
-        };
+    "virtual_servers" or => {
+                              "kontinuum",
+                            };
 
-        "virtual_guests" or =>
-        {
-            "flea",
-            "bluestar",
-            "hildegarde",
-            "escobar",
-            "ashra",
-            "rhys",
-        };
+    "virtual_guests"  or => {
+                              "flea",
+                              "bluestar",
+                              "hildegarde",
+                              "escobar",
+                              "ashra",
+                              "rhys",
+                            };
 
-        "internal" or =>
-        {
-            "bluestar",
-            "kontinuum",
-            "hildegarde",
-            "flea",
-            "escobar",
-            "ashra",
-        };
+    "internal"        or => {
+                              "bluestar",
+                              "kontinuum",
+                              "hildegarde",
+                              "flea",
+                              "escobar",
+                              "ashra",
+                            };
 }

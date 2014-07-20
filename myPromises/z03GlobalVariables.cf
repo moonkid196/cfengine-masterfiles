@@ -1,5 +1,11 @@
 # vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
 
+bundle agent z03_global_vars
+{
+  methods:
+    "set_gvars" usebundle => global_vars;
+}
+
 bundle common global_vars
 {
   vars:

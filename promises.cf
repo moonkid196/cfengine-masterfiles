@@ -74,7 +74,6 @@ body common control
                   # baburke.net
                   "myPromises/z01PromiseSetup.cf",
                   @(z01_promise_setup.inputs),
-                  @(z01_promise_setup.my_lib_files),
 
       };
 

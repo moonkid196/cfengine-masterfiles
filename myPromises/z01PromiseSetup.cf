@@ -18,8 +18,12 @@ bundle common z01_promise_setup
       "c12_base_services",
     };
 
-    "promise_files" slist =>
+    "inputs" slist =>
     {
+      # My library bundles
+      "myPromises/lib/files.cf",
+      "myPromises/lib/services.cf",
+
       "myPromises/z02GlobalClasses.cf",
       "myPromises/z11GlobalVariables.cf",
       "myPromises/a01Hello.cf",
@@ -31,11 +35,5 @@ bundle common z01_promise_setup
       "myPromises/c02FilesSetup.cf",
       "myPromises/c11BadServices.cf",
       "myPromises/c12BaseServices.cf",
-    };
-
-    "my_lib_files" slist =>
-    {
-      "myPromises/lib/files.cf",
-      "myPromises/lib/services.cf",
     };
 }

@@ -22,6 +22,7 @@ bundle common z01_promise_setup
     {
       # My library bundles
       "myPromises/lib/files.cf",
+      "myPromises/lib/packages.cf",
       "myPromises/lib/services.cf",
 
       "myPromises/z02GlobalClasses.cf",

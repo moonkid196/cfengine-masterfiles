@@ -1,0 +1,119 @@
+##########################################################################
+# vim:syntax=cf3:tabstop=2:shiftwidth=2:softtabstop=2:smarttab:expandtab
+
+# EECS policy to handle software package management
+
+
+bundle agent yum_groups_optional(grouplist)
+{
+  vars:
+    any::
+      "clist[$(grouplist)]" string => canonify("$(grouplist)");
+
+  packages:
+    any::
+      "$(grouplist)"
+        package_method => yum_group,
+        package_policy => "verify",
+        classes        => if_notkept("$(clist[$(grouplist)])_missing");
+
+  commands:
+    any::
+      "$(paths.yum) -y --quiet --setopt=group_package_types=default,mandatory,optional groupinstall $(grouplist)"
+        ifvarclass => "$(clist[$(grouplist)])_missing";
+
+  reports:
+    inform_mode::
+      "Group that should be installed with optional packages: $(grouplist)"
+        ifvarclass => "$(clist[$(grouplist)])_missing";
+
+}
+
+bundle agent yum_groups(grouplist)
+{
+  vars:
+    any::
+      "clist[$(grouplist)]" string => canonify("$(grouplist)");
+
+  packages:
+    any::
+      "$(grouplist)"
+        package_method => yum_group,
+        classes        => if_repaired("$(clist[$(grouplist)])_installed");
+
+  reports:
+    inform_mode::
+      "Group that should be installed: $(grouplist)"
+        ifvarclass => "$(clist[$(grouplist)])_installed";
+}
+
+bundle agent install_packages(pkglist)
+{
+  packages:
+    redhat.cfengine_3_5::
+      "$(pkglist)"
+        package_policy => "add",
+        package_method => yum_rpm;
+
+    !(redhat.cfengine_3_5)::
+      "$(pkglist)"
+        package_policy => "add";
+}
+
+bundle agent remove_packages(pkglist)
+{
+  packages:
+    redhat.cfengine_3_5::
+      "$(pkglist)"
+        package_policy => "delete",
+        package_method => yum_rpm;
+
+    !(redhat.cfengine_3_5)::
+      "$(pkglist)"
+        package_policy => "delete";
+}
+
+bundle agent yum_repo_conf(repofile,repo,vars)
+{
+  vars:
+    any::
+      "c_repo" string => canonify("$(repo)");
+
+  files:
+    redhat::
+      "$(repofile)"
+        comment   => "Configure repo $(repo)",
+        handle    => "yum_repo_conf_$(c_repo)",
+        edit_line => set_variable_values_ini("$(vars)", "$(repo)"),
+        classes   => if_ok("yum_repo_$(c_repo)");
+
+  reports:
+    inform_mode::
+      "Configured repo $(repo) in $(repofile)"
+        ifvarclass => "yum_repo_$(c_repo)";
+}
+
+bundle agent pkg_import_gpg(id,url)
+{
+  vars:
+    any::
+      "c_id"                string => canonify("$(id)");
+
+      "$(c_id)_not_present"
+        string => "!any",
+        policy => "overridable";
+
+    redhat::
+      "$(c_id)_not_present" string => not(returnszero("$(paths.rpm) -q $(id) --quiet", "noshell"));
+
+  commands:
+    redhat::
+      "$(paths.rpm) --import $(url)"
+        classes    => if_repaired("$(c_id)_gpg_key_added"),
+        ifvarclass => "$($(c_id)_not_present)";
+
+  reports:
+    inform_mode::
+      "GPG key, $(id), added"
+        ifvarclass => "$(c_id)_gpg_key_added";
+}

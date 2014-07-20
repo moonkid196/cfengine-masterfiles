@@ -1,2 +1,86 @@
-# vim:syntax=cf3
+##########################################################################
+# vim:syntax=cf3:tabstop=2:shiftwidth=2:softtabstop=2:smarttab:expandtab
+# Policy to setup LDAP-related services
+#
 
+bundle agent install_ca_certificate(dir,cert)
+{
+  vars:
+    "cert_hash"  string => concat(execresult("$(global_paths.openssl) x509 -in $(cert) -noout -subject_hash", "noshell"), ".0");
+    "basename"   string => lastnode("$(cert)", "/");
+    "c_basename" string => canonify("$(basename)");
+
+  files:
+    "$(dir)"
+      comment           => "Ensure the directory exists and is readable",
+      handle            => "install_ca_certs_dirfix",
+      perms             => system_owned("0755"),
+      create            => "true",
+      move_obstructions => "true";
+
+    "$(dir)/$(basename)"
+      comment           => "Place certificate $(basename) into $(dir)",
+      handle            => "setup_ca_certs_$(c_basename)",
+      copy_from         => local_dcp("$(cert)"),
+      perms             => system_owned("0644"),
+      classes           => if_repaired("new_cert_$(c_basename)");
+
+    "$(dir)/$(cert_hash)"
+      comment           => "Create hash symlink for certificate",
+      handle            => "setup_ca_links_$(c_basename)",
+      link_from         => ln_s("$(basename)"),
+      classes           => if_repaired("new_link_$(c_basename)"),
+      move_obstructions => "true";
+
+  reports:
+    inform_mode::
+      "Placing $(basename) into $(dir) as $(cert_hash)"
+        ifvarclass => "new_cert_$(c_basename)";
+
+      "Creating link $(cert_hash) to $(basename)"
+        ifvarclass => "new_link_$(c_basename)";
+}
+
+bundle agent remove_authorized_key(file,tag)
+{
+  vars:
+    any::
+      "c_tag" string => canonify("$(tag)");
+
+  files:
+    any::
+      "$(file)"
+        comment       => "Remove a key from an authorized_keys by tag",
+        handle        => "remove_authrized_key_$(c_tag)",
+        edit_defaults => no_backup,
+        edit_line     => delete_lines_matching(".* $(tag)"),
+        classes       => if_repaired("removed_authorized_key_$(c_tag)");
+
+  reports:
+    inform_mode::
+      "Removed key with tag, $(tag), from $(file)"
+        ifvarclass => "removed_authorized_key_$(c_tag)";
+}
+
+bundle agent add_authorized_key(file,tag,keyfile)
+{
+  vars:
+    any::
+      "keyfile_max" int => "1024";
+      "new_key"  string => readfile("$(keyfile)", "$(keyfile_max)");
+      "c_tag"    string => canonify("$(tag)");
+
+  files:
+    any::
+      "$(file)"
+        comment       => "Add key to authorized_keys file",
+        handle        => "add_authorized_key_$(c_tag)",
+        edit_defaults => no_backup,
+        edit_line     => replace_or_add(".* $(tag)", "$(new_key)"),
+        classes       => if_repaired("added_authorized_key_$(c_tag)");
+
+  reports:
+    inform_mode::
+      "Added key with tag, $(tag), to $(file)"
+        ifvarclass => "added_authorized_key_$(c_tag)";
+}

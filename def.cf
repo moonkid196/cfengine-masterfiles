@@ -153,6 +153,8 @@ bundle common def
         "$(sys.workdir)/reports",
       };
 
+      "repository" string => "$(sys.workdir)/repository";
+
   classes:
 
       ### Enable special features policies. Set to "any" to enable.

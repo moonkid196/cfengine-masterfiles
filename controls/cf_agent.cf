@@ -28,6 +28,8 @@ body agent control
       # explicitly not supported (but they should break long before)
       abortclasses => { "cfengine_3_3", "cfengine_3_4" };
 
+      default_repository => "$(def.repository)";
+
       # Environment variables based on Distro
 
     debian::

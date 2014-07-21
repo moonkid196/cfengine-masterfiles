@@ -4,14 +4,22 @@
 bundle agent z10_cfengine
 {
   vars:
+    any::
+      "keyurl"   string => "http://cfengine.com/pub/gpg.key";
+
     redhat::
-      "keyid" string => "gpg-pubkey-58b41edf-537a0647";
-      "keyurl" string => "http://cfengine.com/pub/gpg.key";
+      "keyid"    string => "gpg-pubkey-58b41edf-537a0647";
+      "repofile" string => "/etc/yum.repos.d/cfengine-community.repo";
+      "repoid"   string => "cfengine-repository";
+
+      "repovars[cfengine-repository][baseurl]"
+        string => "http://cfengine.com/pub/yum/$basearch/";
 
   methods:
     any::
       "fix_repository" usebundle => cfe_repository;
       "repo_gpg_key"   usebundle => pkg_import_gpg("$(keyid)", "$(keyurl)");
+      "repo_config"    usebundle => yum_repo_conf("$(repofile)", "$(repoid)", "$(this.bundle).repovars");
 }
 
 bundle agent cfe_repository

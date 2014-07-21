@@ -26,7 +26,7 @@ body server control
 
       ## List of hosts that we'll accept connections not using latest protocol
       ## (absence of this option means allow all, empty list means allow none)
-      # allowlegacyconnects   => { };
+      allowlegacyconnects   => { "127.0.0.1" , "::1", @(def.acl) };
 
       # Maximum number of concurrent connections.
       # Suggested value >= total number of hosts

@@ -3,9 +3,15 @@
 
 bundle agent z10_cfengine
 {
+  vars:
+    redhat::
+      "keyid" string => "gpg-pubkey-58b41edf-537a0647";
+      "keyurl" string => "http://cfengine.com/pub/gpg.key";
+
   methods:
     any::
       "fix_repository" usebundle => cfe_repository;
+      "repo_gpg_key"   usebundle => pkg_import_gpg("$(keyid)", "$(keyurl)");
 }
 
 bundle agent cfe_repository

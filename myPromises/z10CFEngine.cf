@@ -7,19 +7,27 @@ bundle agent z10_cfengine
     any::
       "keyurl"   string => "http://cfengine.com/pub/gpg.key";
 
+    linux::
+      "cfe_check_cronjob"
+        string => "pkill -0 -u root -x cf-execd || /var/cfengine/bin/cf-agent --bootstrap $(sys.policy_hub)";
+
     redhat::
-      "keyid"    string => "gpg-pubkey-58b41edf-537a0647";
-      "repofile" string => "/etc/yum.repos.d/cfengine-community.repo";
-      "repoid"   string => "cfengine-repository";
+      "cfe_pkg"     string => "cfengine-community";
+      "cfe_version" string => "3.6.0-1";
+      "keyid"       string => "gpg-pubkey-58b41edf-537a0647";
+      "repofile"    string => "/etc/yum.repos.d/cfengine-community.repo";
+      "repoid"      string => "cfengine-repository";
 
       "repovars[cfengine-repository][baseurl]"
         string => "http://cfengine.com/pub/yum/$basearch/";
 
   methods:
     any::
-      "fix_repository" usebundle => cfe_repository;
-      "repo_gpg_key"   usebundle => pkg_import_gpg("$(keyid)", "$(keyurl)");
-      "repo_config"    usebundle => yum_repo_conf("$(repofile)", "$(repoid)", "$(this.bundle).repovars");
+      "fix_repository"  usebundle => cfe_repository;
+      "check_cfengine"  usebundle => cronjob("$(cfe_check_cronjob)", "root", "*", "47");
+      "repo_gpg_key"    usebundle => pkg_import_gpg("$(keyid)", "$(keyurl)");
+      "repo_config"     usebundle => yum_repo_conf("$(repofile)", "$(repoid)", "$(this.bundle).repovars");
+      "update_cfengine" usebundle => update_cfengine("$(cfe_pkg)", "$(cfe_version)");
 }
 
 bundle agent cfe_repository
@@ -35,4 +43,32 @@ bundle agent cfe_repository
   reports:
     inform_mode::
       "Fixing permissions on files repository, $(def.repository)";
+}
+
+bundle agent update_cfengine(pkg,ver)
+{
+  packages:
+    x86_64::
+      "$(pkg)"
+        package_policy        => "update",
+        package_version       => "$(ver)",
+        package_architectures => { "x86_64" },
+        package_select        => ">=",
+        classes               => if_repaired("cfe_updated");
+
+  commands:
+    cfengine_3_5::
+      "/var/cfengine/bin/cf-agent --bootstrap $(sys.policy_hub)"
+        ifvarclass => "cfe_updated";
+
+  reports:
+    inform_mode::
+      "CFEngine bootstrapped to $(sys.policy_hub)"
+        ifvarclass => "cfe_bootstrapped";
+
+      "CFEngine updated to at least $(ver)"
+        ifvarclass => "cfe_updated";
+
+    !x86_64::
+      "Warning: Not supporting upgrades of CFEngine on anything other than x86_64";
 }

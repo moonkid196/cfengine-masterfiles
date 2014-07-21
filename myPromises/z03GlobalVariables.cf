@@ -21,4 +21,10 @@ bundle common global_vars
     redhat::
       "openssl"     string => "/usr/bin/openssl";
       "restorecon"  string => "/usr/sbin/restorecon";
+
+    linux::
+      "system_group" string => "root";
+
+    openbsd::
+      "system_group" string => "wheel";
 }

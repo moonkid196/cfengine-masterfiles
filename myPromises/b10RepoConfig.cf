@@ -1,6 +1,6 @@
 # vim:syntax=cf3:tabstop=2:shiftwidth=2:softtabstop=2:smarttab:expandtab
 
-bundle agent b01_repo_config
+bundle agent b10_repo_config
 {
   vars:
     fedora_19::

@@ -3,20 +3,20 @@
 bundle common z01_promise_setup
 {
   vars:
-    "bundles" slist => {
-                        "z02_global_classes",
-                        "z03_global_vars",
-                        "z10_cfengine",
-                        "a01_hello",
-                        "b01_repo_config",
-                        "b02_packager_config",
-                        "b03_base_packages",
-                        "b04_ldap_setup",
-                        "c01_root_setup",
-                        "c02_files_setup",
-                        "c11_bad_services",
-                        "c12_base_services",
-                       };
+    "bundles"       slist => {
+                              "z02_global_classes",
+                              "z03_global_vars",
+                              "z10_cfengine",
+                              "a01_hello",
+                              "b10_repo_config",
+                              "b02_packager_config",
+                              "b03_base_packages",
+                              "b04_ldap_setup",
+                              "c01_root_setup",
+                              "c02_files_setup",
+                              "c11_bad_services",
+                              "c12_base_services",
+                             };
 
     "inputs"  slist => {
                         # My library bundles
@@ -24,17 +24,17 @@ bundle common z01_promise_setup
                         "myPromises/lib/packages.cf",
                         "myPromises/lib/services.cf",
 
-                        "myPromises/z02GlobalClasses.cf",
-                        "myPromises/z03GlobalVariables.cf",
-                        "myPromises/z10CFEngine.cf",
-                        "myPromises/a01Hello.cf",
-                        "myPromises/b01RepoConfig.cf",
-                        "myPromises/b02PackagerConfig.cf",
-                        "myPromises/b03BasePackages.cf",
-                        "myPromises/b04LdapSetup.cf",
-                        "myPromises/c01RootSetup.cf",
-                        "myPromises/c02FilesSetup.cf",
-                        "myPromises/c11BadServices.cf",
-                        "myPromises/c12BaseServices.cf",
-                       };
+                              "myPromises/z02GlobalClasses.cf",
+                              "myPromises/z03GlobalVariables.cf",
+                              "myPromises/z10CFEngine.cf",
+                              "myPromises/a01Hello.cf",
+                              "myPromises/b10RepoConfig.cf",
+                              "myPromises/b02PackagerConfig.cf",
+                              "myPromises/b03BasePackages.cf",
+                              "myPromises/b04LdapSetup.cf",
+                              "myPromises/c01RootSetup.cf",
+                              "myPromises/c02FilesSetup.cf",
+                              "myPromises/c11BadServices.cf",
+                              "myPromises/c12BaseServices.cf",
+                             };
 }

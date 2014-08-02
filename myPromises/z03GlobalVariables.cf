@@ -4,6 +4,7 @@ bundle agent z03_global_vars
 {
   methods:
     "set_gvars" usebundle => global_vars;
+    "set_paths" usebundle => global_paths;
 }
 
 bundle common global_vars
@@ -17,6 +18,7 @@ bundle common global_vars
       "custom_lib"        string => "$(this.promises_dir)/lib";
       "generic_dir"       string => "$(this.templates_dir)/generic";
       "ca_ver"               int => "2";
+      "passwd_shell_field"   int => "7";
 
     redhat::
       "openssl"     string => "/usr/bin/openssl";
@@ -27,4 +29,12 @@ bundle common global_vars
 
     openbsd::
       "system_group" string => "wheel";
+}
+
+bundle common global_paths
+{
+  vars:
+    redhat::
+      "zsh"     string => "/bin/zsh";
+      "getent"  string => "/usr/bin/getent";
 }

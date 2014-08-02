@@ -1,0 +1,50 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+
+bundle agent d10_root_setup
+{
+  vars:
+    any::
+      "root_home_dir"     string => "/root";
+
+      "root_templates"    string => "$(global_vars.templates_dir)/root";
+
+      "root_passwd"       string => execresult("$(global_paths.getent) root passwd", "useshell");
+      "root_passwd_array"  slist => splitstring("$(root_passwd)", ":", "7");
+
+  classes:
+    any::
+      "root_has_zsh"
+        expression => strcmp("$(global_paths.zsh)", "$(root_passwd_array)[$(global_vars.passwd_shell_field)]");
+
+  files:
+    any::
+      "$(root_home_dir)"
+        comment      => "Make root's home area nicer",
+        handle       => "root_setup_files_home_dir",
+        changes      => detect_content,
+        copy_from    => backup_local_cp("$(root_templates)"),
+        depth_search => recurse_with_base("inf"),
+        perms        => system_owned("0600"),
+        create       => "true",
+        classes      => if_repaired("relabel_root_home");
+
+    any.!root_has_zsh::
+      "/etc/passwd"
+        depends_on => { "base_packages_install" },
+        comment    => "Set root shell to $(global_paths.zsh)",
+        handle     => "root_setup_files_add_zsh",
+        classes    => if_repaired("root_setup_added_zsh"),
+        edit_line  => set_user_field("root", "$(global_vars.passwd_shell_field)", "$(global_paths.zsh)");
+
+  commands:
+    # Should probably just check for selinux being on
+    fedora_19.relabel_root_home::
+      "/usr/sbin/restorecon -R $(root_home_dir)";
+
+  reports:
+    any::
+      "Checking root's environment";
+
+    root_setup_added_zsh::
+      "Setting root's shell to $(global_paths.zsh)";
+}

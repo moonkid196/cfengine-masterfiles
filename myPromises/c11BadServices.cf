@@ -1,26 +1,24 @@
-# vim:syntax=cf3
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
 #
 # File to disable services we don't want running
 #
 
-bundle agent c11_bad_services
+bundle agent d30_bad_services
 {
-    vars:
-        fedora_19::
-            "services_to_stop" slist =>
-            {
-                "sendmail",
-                "chronyd",
-            };
+  vars:
+    fedora_19::
+      "services_to_stop" slist => {
+                                    "sendmail",
+                                    "chronyd",
+                                  };
 
-    services:
-        any::
-            "$(services_to_stop)"
-                       comment => "Stopping conflicting or unneeded services",
-                service_policy => "disable",
-                service_method => custom_service;
+  services:
+    any::
+      "$(services_to_stop)"
+        comment        => "Stopping conflicting or unneeded services",
+        service_policy => "disable";
 
-    reports:
-        any::
-            "Ensuring services we don't want to run, aren't";
+  reports:
+    any::
+      "Ensuring services we don't want to run, aren't";
 }

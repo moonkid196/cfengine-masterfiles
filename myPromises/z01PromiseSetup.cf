@@ -13,7 +13,7 @@ bundle common z01_promise_setup
                               "b30_base_packages",
                               "b40_ldap_setup",
                               "d10_root_setup",
-                              "c02_files_setup",
+                              "d20_files_setup",
                               "c11_bad_services",
                               "c12_base_services",
                              };
@@ -33,7 +33,7 @@ bundle common z01_promise_setup
                               "myPromises/b30BasePackages.cf",
                               "myPromises/b40LdapSetup.cf",
                               "myPromises/d10RootSetup.cf",
-                              "myPromises/c02FilesSetup.cf",
+                              "myPromises/d20FilesSetup.cf",
                               "myPromises/c11BadServices.cf",
                               "myPromises/c12BaseServices.cf",
                              };

@@ -1,0 +1,35 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+
+bundle agent b30_base_packages
+{
+  vars:
+    fedora_19::
+      "baburke_packages" slist => {
+                                    "nmap-ncat",
+                                    "rsync",
+                                    "curl",
+                                    "tmux",
+                                    "vim-enhanced",
+                                    "mlocate",
+                                    "bwm-ng",
+                                    "cfengine-community",
+                                    "zsh",
+                                    "bwm-ng",
+                                    "iotop",
+                                    "lsof",
+                                    "strace",
+                                    "tuned",
+                                    "policycoreutils-python",
+                                    "logwatch",
+                                    "net-tools",
+                                  };
+
+  methods:
+    any::
+      "base_packages"
+        usebundle => install_packages(@(baburke_packages));
+
+  reports:
+    any::
+      "Ensuring base-line packages are installed for all machines";
+}

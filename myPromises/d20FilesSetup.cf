@@ -1,0 +1,42 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+#
+# File to just get files into place (on most systems)
+#
+
+bundle agent d20_files_setup
+{
+  vars:
+    any::
+      "templates" string => "$(global_vars.templates_dir)/$(this.bundle)";
+
+    redhat::
+      "file_list" slist  => {
+                              "/etc/pki/tls/certs/bburke.crt",
+                            };
+
+  methods:
+    any::
+      "files_placement"
+        usebundle => file_placement("$(templates)", @(file_list));
+
+  reports:
+    any::
+      "Checking for common files needed on many systems";
+}
+
+
+bundle agent file_placement(templates,file_path)
+{
+  vars:
+    any::
+      "base_name[$(file_path)]" string => lastnode("$(file_path)", "/");
+
+  files:
+    any::
+      "$(file_path)"
+        comment   => "Put in place os-agnostic files",
+        handle    => "files_setup_$(base_name[$(file_path)])",
+        changes   => detect_content,
+        copy_from => no_backup_dcp("$(templates)/$(base_name[$(file_list)])"),
+        perms     => system_owned("0644");
+}

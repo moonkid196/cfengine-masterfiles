@@ -1,55 +1,64 @@
-# vim:syntax=cf3
+# vim:syntax=cf3:tabstop=2:shiftwidth=2:softtabstop=2:smarttab:expandtab
 
 bundle agent b01_repo_config
 {
-    vars:
-        fedora_19::
-            # Repo names
-            "fedora_repo"               string => "fedora";
-            "fedora_updates_repo"       string => "updates";
+  vars:
+    fedora_19::
+      # Repo names
+      "fedora_repo"               string => "fedora";
+      "fedora_updates_repo"       string => "updates";
 
-            # Filesystem paths
-            "repo_path"                 string => "/etc/yum.repos.d";
-            "fedora_repo_path"          string => "$(repo_path)/fedora.repo";
-            "fedora_updates_repo_path"  string => "$(repo_path)/fedora-updates.repo";
+      # Filesystem paths
+      "repo_path"                 string => "/etc/yum.repos.d";
+      "fedora_repo_path"          string => "$(repo_path)/fedora.repo";
+      "fedora_updates_repo_path"  string => "$(repo_path)/fedora-updates.repo";
 
-            # HTTP paths
-            "fedora_mirror"             string => "http://gateway.baburke.net/mirror/Fedora";
-            "fedora_http_path"          string => "releases/19/Everything/x86_64/os";
-            "fedora_updates_http_path"  string => "updates/19/x86_64";
+      # HTTP paths
+      "fedora_mirror"             string => "http://gateway.baburke.net/mirror/Fedora";
+      "fedora_http_path"          string => "releases/19/Everything/x86_64/os";
+      "fedora_updates_http_path"  string => "updates/19/x86_64";
 
-    files:
-        fedora_19.internal::
-            "$(fedora_repo_path)"
-                edit_defaults   => backup_timestamp,
-                changes         => detect_all_change,
-                edit_line       => yum_repo_update("$(fedora_repo)", "$(fedora_mirror)", "$(fedora_http_path)"),
-                classes         => if_repaired("clear_package_cache");
+      "v[$(fedora_repo)][baseurl]"
+        string => "$(fedora_mirror)/$(fedora_http_path)";
+      "v[$(fedora_updates_repo)][baseurl]"
+        string => "$(fedora_mirror)/$(fedora_updates_http_path)";
 
-            "$(fedora_updates_repo_path)"
-                edit_defaults   => backup_timestamp,
-                changes         => detect_all_change,
-                edit_line       => yum_repo_update("$(fedora_updates_repo)", "$(fedora_mirror)", "$(fedora_updates_http_path)"),
-                classes         => if_repaired("clear_package_cache");
+  files:
+    fedora_19.internal::
+      "$(fedora_repo_path)"
+        comment         => "Remove mirrorlist lines in repo files",
+        handle          => "repo_config_files_fedora",
+        edit_defaults   => backup_timestamp,
+        changes         => detect_content,
+        edit_line       => yum_remove_mirrorlist("$(fedora_repo)"),
+        classes         => if_ok("mirrorlist_removed");
 
-    commands:
-        clear_package_cache.redhat::
-            "/usr/bin/yum clean all";
+      "$(fedora_updates_repo_path)"
+        comment         => "Remove mirrorlist lines in repo files",
+        handle          => "repo_config_files_fedora_updates",
+        edit_defaults   => backup_timestamp,
+        changes         => detect_content,
+        edit_line       => yum_remove_mirrorlist("$(fedora_updates_repo)"),
+        classes         => if_ok("mirrorlist_removed");
 
-    reports:
-        internal::
-            "Pointing local machines to local mirror";
+  methods:
+    fedora_19::
+      "fedora_conf"
+        usebundle => yum_repo_conf("$(fedora_repo_path)", "$(fedora_repo)", "$(this.bundle).v");
+      "fedora_updates_conf"
+        usebundle => yum_repo_conf("$(fedora_updates_repo_path)", "$(fedora_updates_repo)", "$(this.bundle).v");
+
+  reports:
+    any::
+      "Pointing local machines to local mirror"
+        ifvarclass => "mirrorlist_removed";
 }
 
 
-bundle edit_line yum_repo_update(repo, mirror, path)
+bundle edit_line yum_remove_mirrorlist(repo)
 {
-    replace_patterns:
-        "^(mirrorlist=.*)$"
-            replace_with    => comment("#"),
-            select_region   => INI_section("$(repo)");
-
-        "^#\s*baseurl=.*$"
-            replace_with    => value("baseurl=$(mirror)/$(path)"),
-            select_region   => INI_section("$(repo)");
+  replace_patterns:
+    "^(mirrorlist=.*)$"
+      replace_with    => comment("#"),
+      select_region   => INI_section("$(repo)");
 }

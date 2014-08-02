@@ -3,16 +3,6 @@
 bundle common z02_global_classes
 {
   classes:
-    "baburke"         or => {
-                              "bluestar",
-                              "kontinuum",
-                              "hildegarde",
-                              "flea",
-                              "escobar",
-                              "ashra",
-                              "rhys",
-                            };
-
     "servers"         or => {
                               "bluestar",
                               "kontinuum",

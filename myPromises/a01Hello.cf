@@ -7,9 +7,9 @@ bundle agent a01_hello
             "I am $(sys.fqhost)."
             comment => "Just some basic status fodder for email.";
 
-        baburke::
+        baburke_net::
             "I am a baburke.net machine.";
 
-        baburke.servers::
+        baburke_net.servers::
             "I am also a server.";
 }

@@ -1,0 +1,51 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+#
+
+bundle agent b40_ldap_setup
+{
+  vars:
+    any::
+      "templates" string => "$(global_vars.templates_dir)/$(this.bundle)";
+
+  methods:
+    any::
+      "setup_ldap_cacerts" usebundle => setup_ldap_cacerts("$(templates)");
+}
+
+bundle agent setup_ldap_cacerts(templates)
+{
+  vars:
+    redhat::
+      "cacertdir" string => "/etc/openldap/cacerts";
+
+    any::
+      "bburke_cafile" string => "$(cacertdir)/bburke_v$(global_vars.ca_ver).crt";
+
+    bburke_ca_present::
+      "bburke_hash" string => execresult("$(global_vars.openssl) x509 -in $(bburke_cafile) -noout -subject_hash", "noshell");
+
+  classes:
+    any::
+      "bburke_ca_present" expression => fileexists("$(bburke_cafile)");
+
+  files:
+    any::
+      "$(bburke_cafile)"
+        comment    => "Bring in any new CA cert files",
+        handle     => "ldap_setup_cacerts_files_cafile",
+        copy_from  => local_dcp("$(templates)/bburke.crt"),
+        changes    => detect_content,
+        perms      => system_owned("0644"),
+        classes    => if_repaired("bburke_ca_file_added");
+
+      "$(cacertdir)/$(bburke_hash).0"
+        comment    => "Create LDAP cacert hash file/link",
+        handle     => "ldap_setup_cacerts_files_hash",
+        link_from  => ln_s("$(bburke_cafile)"),
+        ifvarclass => "bburke_ca_present";
+
+  commands:
+    redhat::
+      "$(global_vars.restorecon) -R $(cacertdir)"
+        ifvarclass => "bburke_ca_file_added";
+}

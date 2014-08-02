@@ -18,6 +18,14 @@ bundle agent d10_root_setup
 
   files:
     any::
+      "$(root_home_dir)/.zsh.history"
+        comment      => "Make sure the zsh history file exists",
+        handle       => "root_setup_files_zsh_history",
+        changes      => detect_content,
+        perms        => system_owned("0600"),
+        create       => "true",
+        classes      => if_repaired("relabel_root_home");
+
       "$(root_home_dir)"
         comment      => "Make root's home area nicer",
         handle       => "root_setup_files_home_dir",
@@ -25,16 +33,15 @@ bundle agent d10_root_setup
         copy_from    => backup_local_cp("$(root_templates)"),
         depth_search => recurse_with_base("inf"),
         perms        => system_owned("0600"),
-        create       => "true",
         classes      => if_repaired("relabel_root_home");
 
     any.!root_has_zsh::
       "/etc/passwd"
-        depends_on => { "base_packages_install" },
-        comment    => "Set root shell to $(global_paths.zsh)",
-        handle     => "root_setup_files_add_zsh",
-        classes    => if_repaired("root_setup_added_zsh"),
-        edit_line  => set_user_field("root", "$(global_vars.passwd_shell_field)", "$(global_paths.zsh)");
+        depends_on   => { "base_packages_install" },
+        comment      => "Set root shell to $(global_paths.zsh)",
+        handle       => "root_setup_files_add_zsh",
+        classes      => if_repaired("root_setup_added_zsh"),
+        edit_line    => set_user_field("root", "$(global_vars.passwd_shell_field)", "$(global_paths.zsh)");
 
   commands:
     # Should probably just check for selinux being on

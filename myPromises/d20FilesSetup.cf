@@ -37,6 +37,6 @@ bundle agent file_placement(templates,file_path)
         comment   => "Put in place os-agnostic files",
         handle    => "files_setup_$(base_name[$(file_path)])",
         changes   => detect_content,
-        copy_from => no_backup_dcp("$(templates)/$(base_name[$(file_list)])"),
+        copy_from => no_backup_dcp("$(templates)/$(base_name[$(file_path)])"),
         perms     => system_owned("0644");
 }

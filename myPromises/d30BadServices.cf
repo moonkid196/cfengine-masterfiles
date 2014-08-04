@@ -16,7 +16,7 @@ bundle agent d30_bad_services
     any::
       "$(services_to_stop)"
         comment        => "Stopping conflicting or unneeded services",
-        service_policy => "disable";
+        service_policy => "stop";
 
   reports:
     any::

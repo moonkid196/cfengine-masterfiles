@@ -27,6 +27,7 @@ bundle agent ssh_setup(conf)
     fedora_19::
       "file" string => "/etc/ssh/sshd_config";
       "pkg"  string => "openssh-server";
+      "srv"  string => "sshd";
 
   files:
     any::
@@ -51,11 +52,11 @@ bundle agent ssh_setup(conf)
 
   services:
     any::
-      "ssh"
+      "$(srv)"
         service_policy => "start",
         ifvarclass     => "!needs_ssh";
 
-      "ssh"
+      "$(srv)"
         service_policy => "reload",
         ifvarclass     => "ssh_reload";
 }

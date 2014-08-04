@@ -1,0 +1,61 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+#
+
+bundle agent d40_base_services
+{
+  vars:
+    servers::
+      "ssh_conf[PasswordAuthentication]" string => "no";
+      "ssh_conf[AllowGroups]"            string => "root wheel admins"
+                                         policy => "overridable";
+    !servers::
+      "ssh_conf[PasswordAuthentication]" string => "yes";
+      "ssh_conf[AllowGroups]"            string => "root wheel sshusers";
+    web_servers::
+      "ssh_conf[AllowGroups]"            string => "root wheel webadmins";
+
+  methods:
+    any::
+      "ssh"     usebundle => ssh_setup("$(this.bundle).ssh_conf");
+      #"ntp"     usebundle => ntp_setup();
+      #"postfix" usebundle => postfix_setup();
+}
+
+bundle agent ssh_setup(conf)
+{
+  vars:
+    fedora_19::
+      "file" string => "/etc/ssh/sshd_config";
+      "pkg"  string => "openssh-server";
+
+  files:
+    any::
+      "$(file)"
+        comment   => "Edit sshd configuration",
+        handle    => "base_services_ssh_files_sshd",
+        changes   => detect_content,
+        edit_line => set_line_based("$(conf)", " ", "\s+", ".*", "\s*#\s*"),
+        classes   => if_repaired("ssh_reload");
+
+  packages:
+    any::
+      "$(pkg)"
+        package_policy => "verify",
+        classes        => if_notkept("needs_ssh");
+
+  methods:
+    any::
+      "ssh"
+        usebundle  => install_packages("$(pkg)"),
+        ifvarclass => "ssh_reload";
+
+  services:
+    any::
+      "ssh"
+        service_policy => "start",
+        ifvarclass     => "!needs_ssh";
+
+      "ssh"
+        service_policy => "reload",
+        ifvarclass     => "ssh_reload";
+}

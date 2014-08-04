@@ -4,6 +4,7 @@
 bundle agent d40_base_services
 {
   vars:
+    # All SSH, all the time
     servers::
       "ssh_conf[PasswordAuthentication]" string => "no";
       "ssh_conf[AllowGroups]"            string => "root wheel admins",
@@ -15,11 +16,18 @@ bundle agent d40_base_services
     web_servers::
       "ssh_conf[AllowGroups]"            string => "root wheel webadmins";
 
+    # We have a postfix
+    !mail_servers::
+      "postfix_conf[smtp_tls_CAfile]"              string => "/etc/pki/tls/certs/bburke.crt";
+      "postfix_conf[smtp_tls_mandatory_ciphers]"   string => "HIGH";
+      "postfix_conf[smtp_tls_mandatory_protocols]" string => "!SSLv3, !SSLv2";
+      "postfix_conf[smtp_tls_security_level]"      string => "secure";
+
   methods:
     any::
       "ssh"     usebundle => ssh_setup("$(this.bundle).ssh_conf");
+      "postfix" usebundle => postfix_setup("$(this.bundle).postfix_conf");
       #"ntp"     usebundle => ntp_setup();
-      #"postfix" usebundle => postfix_setup();
 }
 
 bundle agent ssh_setup(conf)
@@ -49,7 +57,7 @@ bundle agent ssh_setup(conf)
     any::
       "ssh"
         usebundle  => install_packages("$(pkg)"),
-        ifvarclass => "ssh_reload";
+        ifvarclass => "needs_ssh";
 
   services:
     any::
@@ -60,4 +68,44 @@ bundle agent ssh_setup(conf)
       "$(srv)"
         service_policy => "reload",
         ifvarclass     => "ssh_reload";
+}
+
+bundle agent postfix_setup(conf)
+{
+  vars:
+    fedora_19::
+      "file" string => "/etc/postfix/main.cf";
+      "pkg"  string => "postfix";
+      "srv"  string => "postfix";
+
+  files:
+    any::
+      "$(file)"
+        comment   => "Edit postfix configuration",
+        handle    => "base_services_postfix_files_main",
+        changes   => detect_content,
+        edit_line => set_line_based("$(conf)", "=", "\s*=\s*", ".*", "\s*#\s*"),
+        classes   => if_repaired("postfix_reload");
+
+  packages:
+    any::
+      "$(pkg)"
+        package_policy => "verify",
+        classes        => if_notkept("needs_postfix");
+
+  methods:
+    any::
+      "postfix"
+        usebundle  => install_packages("$(pkg)"),
+        ifvarclass => "needs_postfix";
+
+  services:
+    any::
+      "$(srv)"
+        service_policy => "start",
+        ifvarclass     => "!needs_postfix";
+
+      "$(srv)"
+        service_policy => "reload",
+        ifvarclass     => "postfix_reload";
 }

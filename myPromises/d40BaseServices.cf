@@ -6,7 +6,7 @@ bundle agent d40_base_services
   vars:
     servers::
       "ssh_conf[PasswordAuthentication]" string => "no";
-      "ssh_conf[AllowGroups]"            string => "root wheel admins"
+      "ssh_conf[AllowGroups]"            string => "root wheel admins",
                                          policy => "overridable";
     !servers::
       "ssh_conf[PasswordAuthentication]" string => "yes";

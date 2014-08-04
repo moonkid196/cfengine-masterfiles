@@ -10,6 +10,7 @@ bundle agent d40_base_services
                                          policy => "overridable";
     !servers::
       "ssh_conf[PasswordAuthentication]" string => "yes";
+      "ssh_conf[PermitRootLogin]"        string => "without-password";
       "ssh_conf[AllowGroups]"            string => "root wheel sshusers";
     web_servers::
       "ssh_conf[AllowGroups]"            string => "root wheel webadmins";

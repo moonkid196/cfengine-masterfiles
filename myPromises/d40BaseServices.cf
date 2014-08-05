@@ -23,11 +23,15 @@ bundle agent d40_base_services
       "postfix_conf[smtp_tls_mandatory_protocols]" string => "!SSLv3, !SSLv2";
       "postfix_conf[smtp_tls_security_level]"      string => "secure";
 
+    # We are the time-keepers
+    !ntp_servers.internal::
+      "ntp_conf[servers]" string => "ntp.baburke.net";
+
   methods:
     any::
       "ssh"     usebundle => ssh_setup("$(this.bundle).ssh_conf");
       "postfix" usebundle => postfix_setup("$(this.bundle).postfix_conf");
-      #"ntp"     usebundle => ntp_setup();
+      "ntp"     usebundle => ntp_setup("$(this.bundle).ntp_conf");
 }
 
 bundle agent ssh_setup(conf)
@@ -44,6 +48,7 @@ bundle agent ssh_setup(conf)
         comment   => "Edit sshd configuration",
         handle    => "base_services_ssh_files_sshd",
         changes   => detect_content,
+        perms     => system_owned("0600"),
         edit_line => set_line_based("$(conf)", " ", "\s+", ".*", "\s*#\s*"),
         classes   => if_repaired("ssh_reload");
 
@@ -84,6 +89,7 @@ bundle agent postfix_setup(conf)
         comment   => "Edit postfix configuration",
         handle    => "base_services_postfix_files_main",
         changes   => detect_content,
+        perms     => system_owned("0644"),
         edit_line => set_line_based("$(conf)", "=", "\s*=\s*", ".*", "\s*#\s*"),
         classes   => if_repaired("postfix_reload");
 
@@ -108,4 +114,53 @@ bundle agent postfix_setup(conf)
       "$(srv)"
         service_policy => "reload",
         ifvarclass     => "postfix_reload";
+}
+
+bundle agent ntp_setup(conf)
+{
+  vars:
+    fedora_19::
+      "file" string => "/etc/ntp.conf";
+      "pkg"  string => "ntp";
+      "srv"  string => "ntpd";
+
+  files:
+    any::
+      "$(file)"
+        comment   => "Remove extraneous server lines",
+        handle    => "base_services_ntp_files_delete",
+        changes   => detect_content,
+        perms     => system_owned("0644"),
+        edit_line => insert_if_no_line_matching("\s*server\s+$(conf[server])\s*", "server $(conf[server])", "true"),
+        classes   => if_repaired("ntp_reload");
+
+      "$(file)"
+        comment   => "Edit ntpd configuration",
+        handle    => "base_services_ntp_files_conf",
+        changes   => detect_content,
+        perms     => system_owned("0644"),
+        edit_line => set_line_based("$(conf)", " ", "\s+", "(?!server).*", "\s*#\s*"),
+        classes   => if_repaired("ntp_reload");
+
+  packages:
+    any::
+      "$(pkg)"
+        package_policy => "verify",
+        classes        => if_notkept("needs_ntp");
+
+  methods:
+    any::
+      "ntp"
+        usebundle  => install_packages("$(pkg)"),
+        ifvarclass => "needs_ntp";
+
+  services:
+    any::
+      "$(srv)"
+        service_policy => "start",
+        ifvarclass     => "!needs_ntp";
+
+      "$(srv)"
+        service_policy => "reload",
+        ifvarclass     => "ntp_reload";
 }

@@ -207,10 +207,10 @@ bundle agent cfe_internal_update_policy
       action => u_immediate,
       classes => u_if_repaired("update_report");
 
-      "$(inputs_dir)/$(templates_dir)"
+      "$(inputs_dir)/$(update_def.templates_dir)"
       comment => "Copy this specially since it has all sorts of files",
       handle => "cfe_internal_update_policy_files_templates_dir",
-      copy_from => u_rcp("$(master_location)/$(templates_dir)","$(sys.policy_hub)"),
+      copy_from => u_rcp("$(master_location)/$(update_def.templates_dir)","$(sys.policy_hub)"),
       depth_search => u_recurse("inf"),
       file_select => u_all_files,
       action => u_immediate,

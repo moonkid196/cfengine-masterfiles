@@ -170,9 +170,9 @@ bundle agent standard_services(service,state)
       expression => returnszero("$(paths.chkconfig) $(service)", "noshell"),
       comment => "We need to know if the service is configured to start at boot or not";
 
-### BEGIN systemd state-probing ###
-# Bryan Burke
-# bburke@eecs.utk.edu
+### BEGIN ###
+# @brief probe the state of a systemd service
+# @author Bryan Burke
 #
 # A collection of classes to determine the capabilities of a given systemd
 # service, then start, stop, etc. the service. Also supports a custom action
@@ -181,6 +181,7 @@ bundle agent standard_services(service,state)
     systemd::
       "service_enabled" expression => reglist(@(systemd_service_info), "UnitFileState=enabled");
       "service_active"  expression => reglist(@(systemd_service_info), "ActiveState=active");
+      "service_loaded"  expression => reglist(@(systemd_service_info), "LoadState=loaded");
 
       "can_stop_service"   expression => reglist(@(systemd_service_info), "CanStop=yes");
       "can_start_service"  expression => reglist(@(systemd_service_info), "CanStart=yes");
@@ -211,7 +212,7 @@ bundle agent standard_services(service,state)
       "action_disable" expression => "request_stop.service_enabled";
 
   commands:
-    systemd:: # note this class is defined in `inventory/linux.cf`
+    systemd.service_loaded:: # note this class is defined in `inventory/linux.cf`
       # conveniently, systemd states map to `services` states, except
       # for `enable`
 
@@ -231,21 +232,21 @@ bundle agent standard_services(service,state)
         ifvarclass => "action_restart",
         classes    => kept_successful_command;
 
+      "$(call_systemctl) -q enable $(service)"
+        ifvarclass => "action_enable",
+        classes    => kept_successful_command;
+
+      "$(call_systemctl) -q disable $(service)"
+        ifvarclass => "action_disable",
+        classes    => kept_successful_command;
+
       # Custom action for any of the non-standard systemd actions such a
       # status, try-restart, isolate, et al.
       "$(call_systemctl) $(state) $(service)"
         ifvarclass => "action_custom",
         classes    => kept_successful_command;
 
-      # I don't exactly know what the 'kept_successful_command' class is used
-      # for, yet, but I only set it on the explicit actions.
-      "$(call_systemctl) -q enable $(service)"
-        ifvarclass => "action_enable";
-
-      "$(call_systemctl) -q disable $(service)"
-        ifvarclass => "action_disable";
-
-### END systemd service-probing ###
+### END systemd section ###
 
     chkconfig.stop.onboot::
       # Only chkconfig disable if it's currently set to start on boot
@@ -283,6 +284,8 @@ bundle agent standard_services(service,state)
   reports:
     inform_mode.systemd::
       "$(this.bundle): using systemd layer to $(state) $(service)";
+    inform_mode.systemd.!service_loaded::
+      "$(this.bundle): Service $(service) unit file is not loaded; doing nothing";
     inform_mode.chkconfig::
       "$(this.bundle): using chkconfig layer to $(state) $(service) (chkconfig mode $(chkconfig_mode))"
         ifvarclass => canonify("chkconfig_$(service)_registered");

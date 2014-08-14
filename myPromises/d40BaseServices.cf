@@ -17,7 +17,7 @@ bundle agent d40_base_services
       "ssh_conf[AllowGroups]"            string => "root wheel webadmins";
 
     # We have a postfix
-    !mail_servers::
+    !(smtp_servers|imap_servers)::
       "postfix_conf[smtp_tls_CAfile]"              string => "/etc/pki/tls/certs/bburke.crt";
       "postfix_conf[smtp_tls_mandatory_ciphers]"   string => "HIGH";
       "postfix_conf[smtp_tls_mandatory_protocols]" string => "!SSLv3, !SSLv2";

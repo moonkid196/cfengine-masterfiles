@@ -35,4 +35,16 @@ bundle common z02_global_classes
                               "ashra",
                               "gateway",
                             };
+
+    "smtp_servers"    or => {
+                              "rhys",
+                            };
+
+    "ldap_servers"    or => {
+                              "rhys",
+                            };
+
+    "imap_servers"    or => {
+                              "ashra",
+                            };
 }

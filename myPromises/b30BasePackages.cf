@@ -23,11 +23,17 @@ bundle agent b30_base_packages
                                     "logwatch",
                                     "net-tools",
                                   };
+        "bad_packages"   slist => {
+                                    "sendmail",
+                                    "chronyd",
+                                  };
 
   methods:
     any::
       "base_packages"
         usebundle => install_packages(@(baburke_packages));
+      "bad_packages"
+        usebundle => remove_packages(@(bad_packages));
 
   reports:
     any::

@@ -9,7 +9,7 @@ bundle agent b40_ldap_setup
       "ldap_cacertdir" string => "/etc/openldap/cacerts";
 
       "cert"            slist => {
-                                  "$(templates)/bburke_v$(global_vars.ca_ver).crt",
+                                  "$(templates)/bburke.crt",
                                  };
 
   methods:

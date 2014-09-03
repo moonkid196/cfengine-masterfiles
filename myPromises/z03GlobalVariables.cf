@@ -35,6 +35,8 @@ bundle common global_paths
 {
   vars:
     redhat::
-      "zsh"     string => "/bin/zsh";
-      "getent"  string => "/usr/bin/getent";
+      "getent"     string => "/usr/bin/getent";
+      "openssl"    string => "/usr/bin/openssl";
+      "restorecon" string => "/usr/sbin/restorecon";
+      "zsh"        string => "/bin/zsh";
 }

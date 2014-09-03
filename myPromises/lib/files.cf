@@ -32,6 +32,11 @@ bundle agent install_ca_certificate(dir,cert)
       classes           => if_repaired("new_link_$(c_basename)"),
       move_obstructions => "true";
 
+  commands:
+    any::
+      "$(global_vars.restorecon) -R $(dir)"
+        ifvarclass => "new_cert_$(c_basename)|new_link_$(c_basename)";
+
   reports:
     inform_mode::
       "Placing $(basename) into $(dir) as $(cert_hash)"

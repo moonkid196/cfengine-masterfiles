@@ -3,6 +3,11 @@
 bundle common z02_global_classes
 {
   classes:
+    "need_ldap"       or => {
+                              canonify("flea.baburke.net"),
+                              canonify("hildegarde.baburke.net"),
+                            };
+
     "servers"         or => {
                               "bluestar",
                               "kontinuum",

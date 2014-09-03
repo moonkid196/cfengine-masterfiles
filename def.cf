@@ -47,7 +47,7 @@ bundle common def
 
       "trustkeysfrom" slist => {
                                  # COMMENT THE NEXT LINE OUT AFTER ALL MACHINES HAVE BEEN BOOTSTRAPPED.
-                                 #@(def.acl),
+                                 @(def.acl),
       },
       comment => "Define from which machines keys can be trusted";
 

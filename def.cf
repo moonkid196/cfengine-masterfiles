@@ -30,8 +30,6 @@ bundle common def
                            # Note that this:
                            # 1. requires def.domain to be correctly set
                            # 2. will cause a DNS lookup for every access
-                           ".*$(def.domain)",
-
                            "10.0.1.0/24",
                            "198.61.212.23",
 

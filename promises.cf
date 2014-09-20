@@ -73,7 +73,7 @@ body common control
 
                 # List of services here
                   "services/file_change.cf",
-                  "cfe_internal/ha/ha.cf"
+                  "cfe_internal/ha/ha.cf",
 
                   # baburke.net
                   "myPromises/z01PromiseSetup.cf",

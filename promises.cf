@@ -12,6 +12,7 @@ body common control
                         # Common bundle first (Best Practice)
                           inventory_control,
                           @(inventory.bundles),
+                          ha_def,
                           def,
                           cfe_internal_hub_vars,
 
@@ -25,6 +26,7 @@ body common control
                          # Agent bundle
                           cfe_internal_management,   # See cfe_internal/CFE_cfengine.cf
                           service_catalogue,
+                          ha_main,
 
                           # baburke.net
                           z01_promise_setup,
@@ -34,6 +36,7 @@ body common control
 
       inputs => {
                  # File definition for global variables and classes
+                  "cfe_internal/ha/ha_def.cf",
                   "def.cf",
 
                 # Inventory policy
@@ -70,6 +73,7 @@ body common control
 
                 # List of services here
                   "services/file_change.cf",
+                  "cfe_internal/ha/ha.cf"
 
                   # baburke.net
                   "myPromises/z01PromiseSetup.cf",

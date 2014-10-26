@@ -15,7 +15,7 @@ bundle agent b40_ldap_setup
     fedora_19::
       "packages" slist => {
                             "autofs",
-                            "libnfsidmap",
+                            "nfs-utils",
                             "sssd",
                           };
 

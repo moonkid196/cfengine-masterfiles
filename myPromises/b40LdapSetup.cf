@@ -117,7 +117,8 @@ bundle agent start_idmap
       "srv"         string => "nfs-idmap";
 
     any::
-      "conf[General][Domain]" => "baburke.net";
+      "conf[General][Domain]"
+        string => "baburke.net";
 
   files:
     any::

@@ -36,6 +36,10 @@ bundle agent b40_ldap_setup
       "autofs"
         usebundle  => start_autofs,
         ifvarclass => "need_ldap";
+
+      "idmap"
+        usebundle  => start_idmap,
+        ifvarclass => "need_ldap";
 }
 
 bundle agent start_ldap
@@ -102,5 +106,33 @@ bundle agent start_autofs
         ifvarclass     => "autofs_needs_restart";
 
       "autofs"
+        service_policy => "start";
+}
+
+bundle agent start_idmap
+{
+  vars:
+    fedora_19::
+      "idmapd_conf" string => "/etc/idmapd.conf";
+      "srv"         string => "nfs-idmap";
+
+    any::
+      "conf[General][Domain]" => "baburke.net";
+
+  files:
+    any::
+      "$(idmapd_conf)"
+        comment   => "Configure idmapd for NFSv4",
+        handle    => "ldap_setup_idmap_files_idmapd_conf",
+        edit_line => set_variable_values_ini("$(this.bundle).conf", "General"),
+        classes   => if_repaired("idmapd_needs_restart");
+
+  services:
+    any::
+      "$(srv)"
+        service_policy => "restart",
+        ifvarclass     => "idmapd_needs_restart";
+
+      "$(srv)"
         service_policy => "start";
 }

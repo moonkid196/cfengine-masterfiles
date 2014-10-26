@@ -13,7 +13,7 @@ bundle agent z10_cfengine
 
     redhat::
       "cfe_pkg"     string => "cfengine-community";
-      "cfe_version" string => "3.6.1-1";
+      "cfe_version" string => "3.6.2-1";
       "keyid"       string => "gpg-pubkey-58b41edf-537a0647";
       "repofile"    string => "/etc/yum.repos.d/cfengine-community.repo";
       "repoid"      string => "cfengine-repository";

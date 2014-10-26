@@ -31,6 +31,10 @@ bundle agent b40_ldap_setup
       "enable_ldap"
         usebundle  => start_ldap,
         ifvarclass => "need_ldap";
+
+      "autofs"
+        usebundle  => start_autofs,
+        ifvarclass => "need_ldap";
 }
 
 bundle agent start_ldap
@@ -72,4 +76,30 @@ body classes ldap_config_classes(ok_class, ok_cancel_class, failed_class)
   repair_failed    => { "$(failed_class)" };
   repair_denied    => { "$(failed_class)" };
   repair_timeout   => { "$(failed_class)" };
+}
+
+bundle agent start_autofs
+{
+  vars:
+    any::
+      "auto_master" string => "/etc/auto.master";
+
+  files:
+    any::
+      "$(auto_master)"
+        comment       => "Configure master maps",
+        handle        => "ldap_setup_autofs_files_auto_master",
+        edit_line     => insert_lines("+auto.master"),
+        edit_defaults => empty,
+        perms         => system_owned("0644"),
+        classes       => if_repaired("autofs_needs_restart");
+
+  services:
+    any::
+      "autofs"
+        service_policy => "restart",
+        ifvarclass     => "autofs_needs_restart";
+
+      "autofs"
+        service_policy => "start";
 }

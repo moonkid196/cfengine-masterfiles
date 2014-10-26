@@ -27,4 +27,49 @@ bundle agent b40_ldap_setup
       "packages"
         usebundle  => install_packages(@(packages)),
         ifvarclass => "need_ldap";
+
+      "enable_ldap"
+        usebundle  => start_ldap,
+        ifvarclass => "need_ldap";
+}
+
+bundle agent start_ldap
+{
+  vars:
+    fedora_19::
+      "authconfig" string => "/etc/sysconfig/authconfig";
+
+  classes:
+    fedora_19::
+      "ldap_disabled" expression => regline("USELDAP=no", "$(authconfig)");
+
+  commands:
+    fedora_19::
+      "/usr/sbin/authconfig --enableldap --enableldapauth --enableldaptls --ldapserver=ldap://ldap.baburke.net --ldapbasedn=dc=baburke,dc=net --update"
+        ifvarclass => "ldap_disabled",
+        classes    => ldap_config_classes("ldap_config_succeeded", "ldap_disabled", "ldap_config_failed");
+
+  reports:
+    any::
+      "LDAP configuration succeeded"
+        ifvarclass => "ldap_config_succeeded";
+
+      "LDAP configuration failed"
+        ifvarclass => "ldap_config_failed";
+}
+
+body classes ldap_config_classes(ok_class, ok_cancel_class, failed_class)
+{
+  # set ok_class if promise is kept or repaired
+  promise_kept     => { "$(ok_class)" };
+  promise_repaired => { "$(ok_class)" };
+
+  # cancel ok_cancel_class if promise is kept or repaired
+  cancel_kept      => { "$(ok_cancel_class)" };
+  cancel_repaired  => { "$(ok_cancel_class)" };
+
+  # set failed_class if promise failed, was deinied, or timed out
+  repair_failed    => { "$(failed_class)" };
+  repair_denied    => { "$(failed_class)" };
+  repair_timeout   => { "$(failed_class)" };
 }

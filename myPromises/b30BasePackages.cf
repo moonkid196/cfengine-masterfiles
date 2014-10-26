@@ -5,18 +5,20 @@ bundle agent b30_base_packages
   vars:
     fedora_19::
       "baburke_packages" slist => {
+                                    "lsof",
+                                    "man-pages",
+                                    "mlocate",
                                     "nmap-ncat",
                                     "rsync",
+                                    "yum-utils",
                                     "curl",
                                     "tmux",
                                     "vim-enhanced",
-                                    "mlocate",
                                     "bwm-ng",
                                     "cfengine-community",
                                     "zsh",
                                     "bwm-ng",
                                     "iotop",
-                                    "lsof",
                                     "strace",
                                     "tuned",
                                     "policycoreutils-python",

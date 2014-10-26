@@ -12,7 +12,19 @@ bundle agent b40_ldap_setup
                                   "$(templates)/bburke.crt",
                                  };
 
+    fedora_19::
+      "packages" slist => {
+                            "sssd",
+                            "autofs",
+                          };
+
   methods:
     any::
-      "ldap_cacerts" usebundle => install_ca_certificate("$(ldap_cacertdir)", "$(cert)");
+      "ldap_cacerts"
+        usebundle => install_ca_certificate("$(ldap_cacertdir)", "$(cert)");
+
+    fedora_19::
+      "packages"
+        usebundle  => install_packages(@(packages)),
+        ifvarclass => "need_ldap";
 }

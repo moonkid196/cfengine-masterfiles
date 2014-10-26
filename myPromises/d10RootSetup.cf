@@ -8,7 +8,7 @@ bundle agent d10_root_setup
 
       "root_templates"    string => "$(global_vars.templates_dir)/$(this.bundle)";
 
-      "root_passwd"       string => execresult("$(global_paths.getent) root passwd", "useshell");
+      "root_passwd"       string => execresult("$(global_paths.getent) root passwd", "noshell");
       "root_passwd_array"  slist => splitstring("$(root_passwd)", ":", "7");
 
   classes:
@@ -37,7 +37,6 @@ bundle agent d10_root_setup
 
     any.!root_has_zsh::
       "/etc/passwd"
-        depends_on   => { "base_packages_install" },
         comment      => "Set root shell to $(global_paths.zsh)",
         handle       => "root_setup_files_add_zsh",
         classes      => if_repaired("root_setup_added_zsh"),

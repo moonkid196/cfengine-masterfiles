@@ -7,6 +7,9 @@ bundle common z02_global_classes
                               classify("flea.baburke.net"),
                               classify("hildegarde.baburke.net"),
                             };
+    "dev_machines"    or => {
+                              classify("flea.baburke.net"),
+                            };
 
     "servers"         or => {
                               "bluestar",

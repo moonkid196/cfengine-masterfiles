@@ -4,6 +4,22 @@ bundle agent b30_base_packages
 {
   vars:
     fedora_19::
+      "groups_optional"  slist => {
+                                    "authoring-and-publishing",
+                                  },
+                    ifvarclass => "dev_machines";
+
+      "groups"           slist => {
+                                    "c-development",
+                                    "development-tools",
+                                    "electronic-lab",
+                                    "rpm-development-tools",
+                                    "robotics-suite",
+                                    "security-lab",
+                                    "sound-and-video",
+                                  },
+                    ifvarclass => "dev_machines";
+
       "baburke_packages" slist => {
                                     "lsof",
                                     "man-pages",
@@ -36,6 +52,12 @@ bundle agent b30_base_packages
         usebundle => install_packages(@(baburke_packages));
       "bad_packages"
         usebundle => remove_packages(@(bad_packages));
+      "groups_optional"
+        usebundle  => yum_groups_optional(@(groups_optional)),
+        ifvarclass => and(isvariable("groups_optional"));
+      "groups"
+        usebundle  => yum_groups(@(groups)),
+        ifvarclass => and(isvariable("groups"));
 
   reports:
     any::

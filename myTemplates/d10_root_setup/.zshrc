@@ -1,10 +1,18 @@
 autoload -Uz compinit
 compinit
 
-export LESS="-emiSRX"
 bindkey -v
 
-# History
-export HISTFILE="$HOME/.zsh.history"
-export SAVEHIST="2000"
-export HISTSIZE="500"
+umask 077
+
+# Set prompt
+source $HOME/.zsh.prompt
+
+setopt nohup
+setopt nobeep
+setopt longlistjobs
+setopt pushdtohome
+setopt noflowcontrol
+setopt bsdecho
+setopt shwordsplit
+setopt autocontinue

@@ -40,6 +40,10 @@ bundle agent b40_ldap_setup
       "idmap"
         usebundle  => start_idmap,
         ifvarclass => "need_ldap";
+
+      "selinux"
+        usebundle  => selinux:boolean("use_nfs_home_dirs", "on"),
+        ifvarclass => "need_ldap";
 }
 
 bundle agent start_ldap

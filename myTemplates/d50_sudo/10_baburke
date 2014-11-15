@@ -2,4 +2,4 @@
 
 Host_Alias LDAP_HOSTS = flea.baburke.net, hildegarde.baburke.net
 
-%admins LDAP_HOSTS (ALL:ALL) ALL
+%admins LDAP_HOSTS = (ALL:ALL) ALL

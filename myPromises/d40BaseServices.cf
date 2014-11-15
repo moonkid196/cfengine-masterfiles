@@ -133,7 +133,7 @@ bundle agent ntp_setup(conf)
         handle    => "base_services_ntp_files_delete",
         changes   => detect_content,
         perms     => system_owned("0644"),
-        edit_line => insert_if_no_line_matching("\s*server\s+$(conf[servers])\s*", "server $(conf[servers])", "true"),
+        edit_line => insert_if_no_line_matching("\s*server\s+$($(conf)[servers])\s*", "server $($(conf)[servers])", "true"),
         classes   => if_repaired("ntp_reload");
 
       "$(file)"

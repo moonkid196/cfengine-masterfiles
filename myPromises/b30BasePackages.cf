@@ -16,7 +16,6 @@ bundle agent b30_base_packages
                                     "rpm-development-tools",
                                     "robotics-suite",
                                     "security-lab",
-                                    "sound-and-video",
                                   },
                     ifvarclass => "dev_machines";
 

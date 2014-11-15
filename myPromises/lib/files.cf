@@ -98,10 +98,10 @@ bundle edit_line insert_if_no_line_matching(re,line,rmmulti)
 
   classes:
     any::
-      "rm_multi"       expression => regcmp("true", "$(rmmulti)");
-      "non_convergent" expression => regcmp("$(re)", "$(line)");
-      "multi_lines"    expression => isgreaterthan("$(n_lines)", "1");
-      "zero_lines"     expression => islessthan("$(n_lines)", "1");
+      "rm_multi"    expression => regcmp("true", "$(rmmulti)");
+      "convergent"  expression => regcmp("$(re)", "$(line)");
+      "multi_lines" expression => isgreaterthan("$(n_lines)", "1");
+      "zero_lines"  expression => islessthan("$(n_lines)", "1");
 
   delete_lines:
     any::
@@ -109,7 +109,7 @@ bundle edit_line insert_if_no_line_matching(re,line,rmmulti)
         comment    => "Delete extra lines in the file, if requested",
         handle     => "eecslib_insert_if_no_line_matching_delete",
         classes    => if_repaired("multi_lines_removed"),
-        ifvarclass => "rm_multi.multi_lines.!non_convergent";
+        ifvarclass => "rm_multi.multi_lines.convergent";
 
   insert_lines:
     any::
@@ -117,17 +117,17 @@ bundle edit_line insert_if_no_line_matching(re,line,rmmulti)
         comment    => "Add requested line",
         handle     => "eecslib_insert_if_no_line_matching_insert",
         classes    => if_repaired("line_added"),
-        ifvarclass => "(zero_lines|multi_lines_removed).!non_convergent";
+        ifvarclass => "(zero_lines|multi_lines_removed).convergent";
 
   reports:
     any::
       'Bravely refusing to do anything since "$(re)" does not match "$(line)"
 (This is not convergent)'
-        ifvarclass => "non_convergent";
+        ifvarclass => "!convergent";
 
     inform_mode::
       "More than one matching line found"
-        ifvarclass => "!non_convergent.multi_lines";
+        ifvarclass => "convergent.multi_lines";
 
       "Deleted extra, matching lines"
         ifvarclass => "multi_lines_removed";

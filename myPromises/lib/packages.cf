@@ -50,27 +50,71 @@ bundle agent yum_groups(grouplist)
 bundle agent install_packages(pkglist)
 {
   packages:
-    redhat.cfengine_3_5::
+    cfengine_3_5.redhat::
       "$(pkglist)"
         package_policy => "add",
         package_method => yum_rpm;
 
-    !(redhat.cfengine_3_5)::
+    cfengine_3_5.!redhat::
       "$(pkglist)"
         package_policy => "add";
+
+  methods:
+    cfengine_3_6::
+      "$(pkglist)" usebundle => package_present("$(pkglist)");
+}
+
+bundle agent update_packages(pkgarray)
+{
+  vars:
+    "pkg" slist => getindices("pkgarray");
+
+  packages:
+    redhat.cfengine_3_5::
+      "$(pkg)"
+        package_policy  => "update",
+        package_select  => ">=",
+        package_version => "$(pkgarray[$(pkg)])",
+        package_method  => yum_rpm,
+        classes         => if_ok("pkg_$(pkg)_updated");
+
+    !(redhat.cfengine_3_5)::
+      "$(pkg)"
+        package_policy  => "update",
+        package_select  => ">=",
+        package_version => "$(pkgarray[$(pkg)])",
+        classes         => if_ok("pkg_$(pkg)_updated");
+
+  reports:
+    inform_mode::
+      "Package $(pkg) is at least version $(pkgarray[$(pkg)])"
+        ifvarclass => "pkg_$(pkg)_updated";
 }
 
 bundle agent remove_packages(pkglist)
 {
   packages:
-    redhat.cfengine_3_5::
+    cfengine_3_5.redhat::
       "$(pkglist)"
         package_policy => "delete",
         package_method => yum_rpm;
 
-    !(redhat.cfengine_3_5)::
+    cfengine_3_5.!redhat::
       "$(pkglist)"
         package_policy => "delete";
+
+  methods:
+    cfengine_3_6::
+      "$(pkglist)" usebundle => package_absent("$(pkglist)");
+}
+
+bundle agent install_pip(pkglist)
+{
+  packages:
+    redhat::
+      "$(pkglist)"
+        package_policy => "add",
+        package_method => pip("-q");
 }
 
 bundle agent yum_repo_conf(repofile,repo,vars)
@@ -116,4 +160,32 @@ bundle agent pkg_import_gpg(id,url)
     inform_mode::
       "GPG key, $(id), added"
         ifvarclass => "$(c_id)_gpg_key_added";
+}
+
+bundle agent redhat_repo(r, x)
+{
+  vars:
+    "c" string => canonify("$(r)");
+
+  classes:
+    "$(c)_present"
+      expression => returnszero("$(paths.path[rpm]) --quiet -q $($(x)[$(r)][id])", "noshell");
+
+    "$(c)_needs_key"
+      expression => isvariable("$(x)[$(r)][key]");
+
+    "$(c)_has_key"
+      expression => returnszero("$(paths.path[rpm]) --quiet -q $($(x)[$(r)][keyid])", "noshell"),
+      ifvarclass => "$(c)_needs_key";
+
+  commands:
+    "$(paths.path[rpm]) --quiet -i $($(x)[$(r)][url])"
+      comment    => "Install repo $(r)",
+      handle     => "additional_repos_redhat_$(c)",
+      ifvarclass => "!$(c)_present";
+
+    "$(paths.path[rpm]) --quiet --import $($(x)[$(r)][key])"
+      comment    => "Get key for $(r)",
+      handle     => "additional_repos__redhat_key_$(c)",
+      ifvarclass => "$(c)_needs_key.!$(c)_has_key";
 }

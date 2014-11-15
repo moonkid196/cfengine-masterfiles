@@ -1,0 +1,60 @@
+##########################################################################
+# vim:syntax=cf3:tabstop=2:shiftwidth=2:softtabstop=2:smarttab:expandtab
+#
+# EECS Specific bundles
+#
+
+body file control
+{
+  namespace => "eecs";
+  inputs    => {
+                "$(sys.libdir)/stdlib.cf",
+               };
+}
+
+bundle agent rsync(opts)
+{
+  vars:
+    any::
+      "keys"          slist => getindices(opts);
+      "$(keys)"      string => "$(opts[$(keys)])";
+
+      "run_options"
+        string     => '-aqAXH --delete --no-motd --delay-updates --delete-after "--filter=merge $(filter)"',
+        ifvarclass => and(isvariable("filter"), not(isvariable("options")));
+
+      "run_options"
+        string     => '$(options)',
+        ifvarclass => and(isvariable("$(options)"));
+
+      # long-process parameters
+      "long_process" string => "$(default:global_vars.modules)/long-process";
+      "expire_time"     int => "20"; # Minutes
+      "process_id"   string => canonify("eecs_rsync_$(path)");
+
+  classes:
+    any::
+      "$(keys)_present" expression => "any";
+
+  commands:
+    any::
+      '$(long_process) $(expire_time) $(process_id)'
+        args       => '$(default:global_paths.rsync) $(run_options) $(uri) $(path)',
+        module     => "true",
+        ifvarclass => and("uri_present", "path_present", "filter_present", isvariable("run_options"));
+
+  reports:
+    any::
+      "Bad opts passed to bundle"
+        ifvarclass => not(and("uri_present", "path_present", "filter_present", isvariable("run_options")));
+
+      "Failed to start rsync of /opt"
+        ifvarclass => "$(process_id)_failed";
+
+    inform_mode::
+      "rsync of /opt started"
+        ifvarclass => "$(process_id)_started";
+
+      "rsync of /opt is running"
+        ifvarclass => "$(process_id)_running";
+}

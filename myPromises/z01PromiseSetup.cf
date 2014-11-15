@@ -22,19 +22,18 @@ bundle common z01_promise_setup
                         # My library bundles
                         "myPromises/lib/files.cf",
                         "myPromises/lib/packages.cf",
-                        "myPromises/lib/services.cf",
 
-                              "myPromises/z02GlobalClasses.cf",
-                              "myPromises/z03GlobalVariables.cf",
-                              "myPromises/z10CFEngine.cf",
-                              "myPromises/a01Hello.cf",
-                              "myPromises/b10RepoConfig.cf",
-                              "myPromises/b20PackagerConfig.cf",
-                              "myPromises/b30BasePackages.cf",
-                              "myPromises/b40LdapSetup.cf",
-                              "myPromises/d10RootSetup.cf",
-                              "myPromises/d20FilesSetup.cf",
-                              "myPromises/d30BadServices.cf",
-                              "myPromises/d40BaseServices.cf",
-                             };
+                        "myPromises/z02GlobalClasses.cf",
+                        "myPromises/z03GlobalVariables.cf",
+                        "myPromises/z10CFEngine.cf",
+                        "myPromises/a01Hello.cf",
+                        "myPromises/b10RepoConfig.cf",
+                        "myPromises/b20PackagerConfig.cf",
+                        "myPromises/b30BasePackages.cf",
+                        "myPromises/b40LdapSetup.cf",
+                        "myPromises/d10RootSetup.cf",
+                        "myPromises/d20FilesSetup.cf",
+                        "myPromises/d30BadServices.cf",
+                        "myPromises/d40BaseServices.cf",
+                       };
 }

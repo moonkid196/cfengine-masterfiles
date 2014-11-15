@@ -18,6 +18,7 @@ bundle agent d50_sudo
         comment   => "Place my sudoers file",
         handle    => "sudo_files_sudoers_$(sudoers)",
         copy_from => local_dcp("$(templates)/$(sudoers)"),
+        perms     => system_owned("0440"),
         classes   => if_ok("placed_sudoers_$(sudoers)");
 
   reports:

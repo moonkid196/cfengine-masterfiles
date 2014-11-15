@@ -16,6 +16,7 @@ bundle common z01_promise_setup
                               "d20_files_setup",
                               "d30_bad_services",
                               "d40_base_services",
+                              "d50_sudo",
                              };
 
     "inputs"  slist => {
@@ -35,5 +36,6 @@ bundle common z01_promise_setup
                         "myPromises/d20FilesSetup.cf",
                         "myPromises/d30BadServices.cf",
                         "myPromises/d40BaseServices.cf",
+                        "myPromises/d50Sudo.cf",
                        };
 }

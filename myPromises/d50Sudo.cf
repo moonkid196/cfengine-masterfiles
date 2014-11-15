@@ -1,0 +1,27 @@
+# vim:syntax=cf3:smarttab:expandtab:ts=2:sts=2:sw=2
+#
+# File to configure su/sudo
+#
+
+bundle agent d50_sudo
+{
+  vars:
+    any::
+      "templates" string => "$(global_vars.templates_dir)/$(this.bundle)";
+      "sudoers"    slist => {
+                              "10_baburke",
+                            };
+
+  files:
+    fedora_19::
+      "/etc/sudoers.d/$(sudoers)"
+        comment   => "Place my sudoers file",
+        handle    => "sudo_files_sudoers_$(sudoers)",
+        copy_from => local_dcp("$(templates)/$(sudoers)"),
+        classes   => if_ok("placed_sudoers_$(sudoers)");
+
+  reports:
+    any::
+      "Placed sudoers file $(sudoers)"
+        ifvarclass => "placed_sudoers_$(sudoers)";
+}

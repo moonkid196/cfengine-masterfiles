@@ -5,7 +5,10 @@ bundle agent d40_base_services
 {
   vars:
     # All SSH, all the time
+    any::
+      "ssh_conf[GSSAPIAuthentication]"   string => "no";
     servers::
+      "ssh_conf[X11Forwarding]"          string => "no";
       "ssh_conf[PasswordAuthentication]" string => "no";
       "ssh_conf[AllowGroups]"            string => "root wheel admins",
                                          policy => "overridable";

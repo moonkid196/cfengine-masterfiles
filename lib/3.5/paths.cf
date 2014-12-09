@@ -58,10 +58,16 @@ bundle common paths
       # Common full pathname of commands for OS
       #
 
-    any::
-      "path[getfacl]"  string => "/usr/bin/getfacl";
+    !(freebsd|darwin|smartos)::
       "path[npm]"      string => "/usr/bin/npm";
       "path[pip]"      string => "/usr/bin/pip";
+
+    !(freebsd|darwin)::
+      "path[getfacl]"  string => "/usr/bin/getfacl";
+
+    freebsd|darwin::
+      "path[npm]"      string => "/usr/local/bin/npm";
+      "path[pip]"      string => "/usr/local/bin/pip";
 
     aix::
 
@@ -159,6 +165,10 @@ bundle common paths
       "path[sort]"     string => "/usr/bin/sort";
       "path[tr]"       string => "/usr/bin/tr";
       "path[realpath]" string => "/bin/realpath";
+
+    freebsd::
+
+      "path[getfacl]"  string => "/bin/getfacl";
 
     openbsd::
 
@@ -266,6 +276,7 @@ bundle common paths
       "path[sed]"           string => "/bin/sed";
       "path[sort]"          string => "/bin/sort";
       "path[test]"          string => "/usr/bin/test";
+      "path[wc]"            string => "/usr/bin/wc";
       "path[wget]"          string => "/usr/bin/wget";
       "path[tr]"            string => "/usr/bin/tr";
       "path[realpath]"      string => "/usr/bin/realpath";
@@ -357,6 +368,7 @@ bundle common paths
       "path[sort]"          string => "/usr/bin/sort";
       "path[test]"          string => "/usr/bin/test";
       "path[tr]"            string => "/usr/bin/tr";
+      "path[wc]"            string => "/usr/bin/wc";
       "path[wget]"          string => "/usr/bin/wget";
       "path[realpath]"      string => "/usr/bin/realpath";
 

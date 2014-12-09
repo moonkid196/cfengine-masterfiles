@@ -22,6 +22,11 @@ bundle common def
       comment => "Define a global domain for all hosts",
       handle => "common_def_vars_domain";
 
+      # Mail settings used by body executor control found in controls/cf_execd.cf
+      "mailto" string => "root@$(def.domain)";
+      "mailfrom" string => "root@$(sys.uqhost).$(def.domain)";
+      "smtpserver" string => "localhost";
+
       # List here the IP masks that we grant access to on the server
 
       "acl"     slist => {
@@ -48,6 +53,18 @@ bundle common def
                                  @(def.acl),
       },
       comment => "Define from which machines keys can be trusted";
+
+
+  debian::
+      "environment_vars"
+        handle => "common_def_vars_environment_vars",
+        comment => "Environment variables of the agent process. The values
+                    of environment variables are inherited by child commands.",
+        slist => {
+                   "DEBIAN_FRONTEND=noninteractive",
+                  # "APT_LISTBUGS_FRONTEND=none",
+                  # "APT_LISTCHANGES_FRONTEND=none",
+                 };
 
       # End change #
 
@@ -153,13 +170,13 @@ bundle common def
 
       "repository" string => "$(sys.workdir)/repository";
 
-    # ha_enabled is defined in WORKDIR/cfe_internal/ha/ha_def.cf
+    # enable_cfengine_enterprise_hub_ha is defined below 
     # Disabled by default
 
-    ha_enabled::
+    enable_cfengine_enterprise_hub_ha::
       "policy_servers" slist => {"$(sys.policy_hub)", @(ha_def.ips)};
 
-    !ha_enabled::
+    !enable_cfengine_enterprise_hub_ha::
       "policy_servers" slist => {"$(sys.policy_hub)"};
 
   classes:
@@ -209,7 +226,8 @@ bundle common def
       # Class defining which versions of cfengine are (not) supported
       # by this policy version.
       # Also note that this policy will only be run on enterprise policy_server
-      "postgresql_maintenance_supported" expression => "(policy_server.enterprise.!cfengine_3_5.!ha_enabled)|(policy_server.enterprise.ha_enabled.hub_active)";
+      "postgresql_maintenance_supported"
+        expression => "(policy_server.enterprise.!cfengine_3_5.!enable_cfengine_enterprise_hub_ha)|(policy_server.enterprise.enable_cfengine_enterprise_hub_ha.hub_active)";
 
       # This class is for PosgreSQL maintenance
       # pre-defined to every Sunday at 2 a.m.
@@ -219,6 +237,10 @@ bundle common def
 
       # Vacuum monitoring_mg table every day (except Sunday, when vacuum is run on entire db)
       "postgresql_monitoring_maintenance" expression => "postgresql_maintenance_supported.!Sunday.Hr02.Min00_05";
+
+      # Enable CFEngine Enterprise HA Policy
+      "enable_cfengine_enterprise_hub_ha" expression => "!any";
+      #"enable_cfengine_enterprise_hub_ha" expression => "enterprise_edition";
 }
 
 bundle common inventory_control
